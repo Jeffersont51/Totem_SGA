@@ -15,9 +15,9 @@ import br.com.jefferson.totemsga.util.SunmiPrinterHelper;
 public class PrintLayoutActivity extends BaseActivity {
 
     private SessionManager sessionManager;
-    private Spinner spinnerAlign, spinnerSizeUnit, spinnerSizePriority, spinnerSizeTicket, spinnerSizeService, spinnerSizeDateTime, spinnerSizeName, spinnerSizeFooter;
+    private Spinner spinnerAlign, spinnerSizeUnit, spinnerSizePriority, spinnerSizeTicket, spinnerSizeService, spinnerSizeMensagem, spinnerSizeDateTime, spinnerSizeName, spinnerSizeFooter;
     private android.widget.EditText etFooterText;
-    private CheckBox cbUnit, cbPriority, cbService, cbDateTime;
+    private CheckBox cbUnit, cbPriority, cbService, cbMensagem, cbDateTime;
     private Button btnSave, btnTest;
 
     @Override
@@ -32,6 +32,7 @@ public class PrintLayoutActivity extends BaseActivity {
         spinnerSizePriority = findViewById(R.id.spinnerSizePriority);
         spinnerSizeTicket = findViewById(R.id.spinnerSizeTicket);
         spinnerSizeService = findViewById(R.id.spinnerSizeService);
+        spinnerSizeMensagem = findViewById(R.id.spinnerSizeMensagem);
         spinnerSizeDateTime = findViewById(R.id.spinnerSizeDateTime);
         spinnerSizeName = findViewById(R.id.spinnerSizeName);
         spinnerSizeFooter = findViewById(R.id.spinnerSizeFooter);
@@ -39,6 +40,7 @@ public class PrintLayoutActivity extends BaseActivity {
         cbUnit = findViewById(R.id.cbShowUnit);
         cbPriority = findViewById(R.id.cbShowPriority);
         cbService = findViewById(R.id.cbShowService);
+        cbMensagem = findViewById(R.id.cbShowMensagem);
         cbDateTime = findViewById(R.id.cbShowDateTime);
         btnSave = findViewById(R.id.btnSavePrintLayout);
         btnTest = findViewById(R.id.btnTestPrint);
@@ -62,6 +64,7 @@ public class PrintLayoutActivity extends BaseActivity {
         spinnerSizePriority.setAdapter(sizeAdapter);
         spinnerSizeTicket.setAdapter(sizeAdapter);
         spinnerSizeService.setAdapter(sizeAdapter);
+        spinnerSizeMensagem.setAdapter(sizeAdapter);
         spinnerSizeDateTime.setAdapter(sizeAdapter);
         spinnerSizeName.setAdapter(sizeAdapter);
         spinnerSizeFooter.setAdapter(sizeAdapter);
@@ -73,6 +76,7 @@ public class PrintLayoutActivity extends BaseActivity {
         spinnerSizePriority.setSelection(sessionManager.getPrintSizePriority());
         spinnerSizeTicket.setSelection(sessionManager.getPrintSizeTicket());
         spinnerSizeService.setSelection(sessionManager.getPrintSizeService());
+        spinnerSizeMensagem.setSelection(sessionManager.getPrintSizeMensagem());
         spinnerSizeDateTime.setSelection(sessionManager.getPrintSizeDateTime());
         spinnerSizeName.setSelection(sessionManager.getPrintSizeName());
         spinnerSizeFooter.setSelection(sessionManager.getPrintFooterSize());
@@ -81,6 +85,7 @@ public class PrintLayoutActivity extends BaseActivity {
         cbUnit.setChecked(sessionManager.isPrintShowUnit());
         cbPriority.setChecked(sessionManager.isPrintShowPriority());
         cbService.setChecked(sessionManager.isPrintShowService());
+        cbMensagem.setChecked(sessionManager.isPrintShowMensagem());
         cbDateTime.setChecked(sessionManager.isPrintShowDateTime());
     }
 
@@ -96,6 +101,7 @@ public class PrintLayoutActivity extends BaseActivity {
         sessionManager.setPrintSizePriority(spinnerSizePriority.getSelectedItemPosition());
         sessionManager.setPrintSizeTicket(spinnerSizeTicket.getSelectedItemPosition());
         sessionManager.setPrintSizeService(spinnerSizeService.getSelectedItemPosition());
+        sessionManager.setPrintSizeMensagem(spinnerSizeMensagem.getSelectedItemPosition());
         sessionManager.setPrintSizeDateTime(spinnerSizeDateTime.getSelectedItemPosition());
         sessionManager.setPrintSizeName(spinnerSizeName.getSelectedItemPosition());
         sessionManager.setPrintFooterSize(spinnerSizeFooter.getSelectedItemPosition());
@@ -104,6 +110,7 @@ public class PrintLayoutActivity extends BaseActivity {
         sessionManager.setPrintShowUnit(cbUnit.isChecked());
         sessionManager.setPrintShowPriority(cbPriority.isChecked());
         sessionManager.setPrintShowService(cbService.isChecked());
+        sessionManager.setPrintShowMensagem(cbMensagem.isChecked());
         sessionManager.setPrintShowDateTime(cbDateTime.isChecked());
     }
 
@@ -136,6 +143,11 @@ public class PrintLayoutActivity extends BaseActivity {
         if (sessionManager.isPrintShowService()) {
             helper.setFontSize(sessionManager.getPrintSizeService());
             helper.printText("\nATENDIMENTO T.I\n");
+        }
+
+        if (sessionManager.isPrintShowMensagem()) {
+            helper.setFontSize(sessionManager.getPrintSizeMensagem());
+            helper.printText("\nSala 07\n");
         }
 
         if (sessionManager.isPrintShowDateTime()) {

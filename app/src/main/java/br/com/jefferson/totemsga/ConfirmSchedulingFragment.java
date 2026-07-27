@@ -570,8 +570,9 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
                         args.putString("cliente_nome", selectedAgendamento.cliente.nome);
                         args.putBoolean("has_nome", true);
                         args.putBoolean("is_facial", isFacial);
-                        if (response.servico != null && response.servico.mensagem != null) {
-                            args.putString("servico_mensagem", response.servico.mensagem);
+                        ServicoUnidade suConfirm = servicesMap.get(selectedAgendamento.servico.id);
+                        if (suConfirm != null && suConfirm.mensagem != null && !suConfirm.mensagem.isEmpty()) {
+                            args.putString("servico_mensagem", suConfirm.mensagem);
                         }
                     }
                     

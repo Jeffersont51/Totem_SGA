@@ -6,12 +6,12 @@ public class ServicoUnidade {
     public Servico servico;
     public Departamento departamento;
     public boolean ativo;
+    public String mensagem;
 
     public static class Servico {
         public int id;
         public String nome;
         public String descricao;
-        public String mensagem;
         public boolean ativo;
 
         // Feature Flags (transient/local state)

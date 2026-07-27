@@ -435,6 +435,9 @@ public class SelectionFragment extends BaseKioskFragment {
             if (args != null) {
                 args.putBoolean("is_facial", hasFacial);
                 args.putBoolean("is_nome", hasNome);
+                if (servico.mensagem != null && !servico.mensagem.isEmpty()) {
+                    args.putString("servico_mensagem", servico.mensagem);
+                }
             }
             
             getParentFragmentManager().beginTransaction()
@@ -442,7 +445,7 @@ public class SelectionFragment extends BaseKioskFragment {
                     .addToBackStack(null)
                     .commitAllowingStateLoss();
         } else {
-            String msg = (servico.servico != null) ? servico.servico.mensagem : null;
+            String msg = servico.mensagem;
             issueTicket(servico.servico.id, 1, servico.servico.nome, "Normal", hasFacial, hasNome, msg);
         }
     }
@@ -493,8 +496,8 @@ public class SelectionFragment extends BaseKioskFragment {
                         args.putBoolean("has_nome", hasNome);
                         if (message != null && !message.isEmpty()) {
                             args.putString("servico_mensagem", message);
-                        } else if (response.body().servico != null && response.body().servico.mensagem != null) {
-                            args.putString("servico_mensagem", response.body().servico.mensagem);
+                        } else if (response.body().mensagem != null) {
+                            args.putString("servico_mensagem", response.body().mensagem);
                         }
                     }
 

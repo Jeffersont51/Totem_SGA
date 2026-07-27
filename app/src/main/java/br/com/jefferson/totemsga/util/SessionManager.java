@@ -62,6 +62,8 @@ public class SessionManager {
     private static final String KEY_PRINT_SIZE_PRIORITY = "print_size_priority";
     private static final String KEY_PRINT_SIZE_TICKET = "print_size_ticket";
     private static final String KEY_PRINT_SIZE_SERVICE = "print_size_service";
+    private static final String KEY_PRINT_SIZE_MENSAGEM = "print_size_mensagem";
+    private static final String KEY_PRINT_SHOW_MENSAGEM = "print_show_mensagem";
     private static final String KEY_PRINT_SIZE_DATETIME = "print_size_datetime";
     private static final String KEY_PRINT_SIZE_NAME = "print_size_name";
     private static final String KEY_PRINT_SHOW_UNIT = "print_show_unit";
@@ -290,6 +292,12 @@ public class SessionManager {
 
     public int getPrintSizeService() { return pref.getInt(KEY_PRINT_SIZE_SERVICE, 0); }
     public void setPrintSizeService(int size) { editor.putInt(KEY_PRINT_SIZE_SERVICE, size).apply(); }
+
+    public int getPrintSizeMensagem() { return pref.getInt(KEY_PRINT_SIZE_MENSAGEM, 0); }
+    public void setPrintSizeMensagem(int size) { editor.putInt(KEY_PRINT_SIZE_MENSAGEM, size).apply(); }
+
+    public boolean isPrintShowMensagem() { return pref.getBoolean(KEY_PRINT_SHOW_MENSAGEM, true); }
+    public void setPrintShowMensagem(boolean show) { editor.putBoolean(KEY_PRINT_SHOW_MENSAGEM, show).apply(); }
 
     public int getPrintSizeDateTime() { return pref.getInt(KEY_PRINT_SIZE_DATETIME, 0); }
     public void setPrintSizeDateTime(int size) { editor.putInt(KEY_PRINT_SIZE_DATETIME, size).apply(); }

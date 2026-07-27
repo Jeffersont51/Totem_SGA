@@ -513,6 +513,13 @@ public class ReprintFragment extends BaseKioskFragment {
             helper.printText("\n" + s.servico.nome.toUpperCase() + "\n");
         }
 
+        ServicoUnidade su = (s.servico != null) ? servicesMap.get(s.servico.id) : null;
+
+        if (su != null && sessionManager.isPrintShowMensagem() && su.mensagem != null && !su.mensagem.isEmpty()) {
+            helper.setFontSize(sessionManager.getPrintSizeMensagem());
+            helper.printText("\n" + su.mensagem + "\n");
+        }
+
         if (sessionManager.isPrintShowDateTime()) {
             helper.setFontSize(sessionManager.getPrintSizeDateTime());
             Date dataOriginal = parseDataChegada(s.dataChegada);
@@ -527,13 +534,6 @@ public class ReprintFragment extends BaseKioskFragment {
         if (s.cliente != null && s.cliente.nome != null) {
             helper.setFontSize(sessionManager.getPrintSizeName());
             helper.printText("\nNome: " + s.cliente.nome + "\n");
-        }
-
-        ServicoUnidade su = (s.servico != null) ? servicesMap.get(s.servico.id) : null;
-
-        if (su != null && su.servico != null && su.servico.mensagem != null && !su.servico.mensagem.isEmpty()) {
-            helper.setFontSize(0);
-            helper.printText("\n" + su.servico.mensagem + "\n");
         }
 
         if (resolveFeatureImpressao(su, FeatureParser.FACIAL)) {

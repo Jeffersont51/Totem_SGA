@@ -88,6 +88,16 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:layout_marginTop="4dp">
+                <TextView android:layout_width="120dp" android:layout_height="wrap_content" android:text="Mensagem Serviço:"/>
+                <Spinner android:id="@+id/spinnerSizeMensagem" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
                 <TextView android:layout_width="120dp" android:layout_height="wrap_content" android:text="Data/Hora:"/>
                 <Spinner android:id="@+id/spinnerSizeDateTime" android:layout_width="match_parent" android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -111,6 +121,7 @@
             <CheckBox android:id="@+id/cbShowUnit" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostrar Nome da Unidade"/>
             <CheckBox android:id="@+id/cbShowPriority" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostrar Nome da Prioridade"/>
             <CheckBox android:id="@+id/cbShowService" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostrar Nome do Serviço"/>
+            <CheckBox android:id="@+id/cbShowMensagem" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostrar Mensagem do Serviço"/>
             <CheckBox android:id="@+id/cbShowDateTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostrar Data e Hora"/>
 
             <TextView

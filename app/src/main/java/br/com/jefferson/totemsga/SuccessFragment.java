@@ -283,6 +283,13 @@ public class SuccessFragment extends BaseKioskFragment {
             helper.printText("\n" + service.toUpperCase() + "\n");
         }
 
+        // Mensagem do Serviço (ex: "Sala 07")
+        String servicoMensagem = getArguments() != null ? getArguments().getString("servico_mensagem", "") : "";
+        if (sessionManager.isPrintShowMensagem() && !servicoMensagem.isEmpty()) {
+            helper.setFontSize(sessionManager.getPrintSizeMensagem());
+            helper.printText("\n" + servicoMensagem + "\n");
+        }
+
         // Data e Hora
         if (sessionManager.isPrintShowDateTime()) {
             helper.setFontSize(sessionManager.getPrintSizeDateTime());
@@ -300,12 +307,6 @@ public class SuccessFragment extends BaseKioskFragment {
         if (hasNome && !clienteNome.isEmpty()) {
             helper.setFontSize(sessionManager.getPrintSizeName());
             helper.printText("\nNome: " + clienteNome + "\n");
-        }
-
-        String servicoMensagem = getArguments() != null ? getArguments().getString("servico_mensagem", "") : "";
-        if (!servicoMensagem.isEmpty()) {
-            helper.setFontSize(0);
-            helper.printText("\n" + servicoMensagem + "\n");
         }
 
         boolean isFacial = getArguments() != null && getArguments().getBoolean("is_facial", false);

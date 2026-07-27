@@ -7,6 +7,7 @@ public class TicketResponse {
     public Servico servico;
     public Prioridade prioridade;
     public Cliente cliente;
+    public String mensagem;
 
     public static class Senha {
         public String sigla;
@@ -18,7 +19,6 @@ public class TicketResponse {
         public int id;
         public String nome;
         public String descricao;
-        public String mensagem;
     }
 
     public static class Prioridade {

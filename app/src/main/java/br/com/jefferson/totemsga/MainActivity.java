@@ -57,6 +57,7 @@ public class MainActivity extends BaseActivity implements AdManager.AdListener {
         
         AdManager.getInstance().init(sessionManager, this);
         SunmiPrinterHelper.getInstance().initPrinter(this);
+        br.com.jefferson.totemsga.util.WifiWatchdog.getInstance().start(this);
         setupKioskListeners();
     }
 
@@ -302,5 +303,6 @@ public class MainActivity extends BaseActivity implements AdManager.AdListener {
     protected void onDestroy() {
         super.onDestroy();
         SunmiPrinterHelper.getInstance().deinitPrinter(this);
+        br.com.jefferson.totemsga.util.WifiWatchdog.getInstance().stop();
     }
 }

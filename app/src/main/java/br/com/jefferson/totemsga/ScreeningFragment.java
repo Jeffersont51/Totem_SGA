@@ -72,6 +72,7 @@ public class ScreeningFragment extends BaseKioskFragment {
     private int secondsRemaining;
     private boolean isFacial;
     private boolean hasNome;
+    private String servicoMensagem;
     private final android.os.Handler debounceHandler = new android.os.Handler(android.os.Looper.getMainLooper());
     private Runnable debounceRunnable;
     private android.os.Handler timerHandler = new android.os.Handler(android.os.Looper.getMainLooper());
@@ -111,6 +112,7 @@ public class ScreeningFragment extends BaseKioskFragment {
             themeColor = getArguments().getString(ARG_THEME_COLOR);
             isFacial = getArguments().getBoolean("is_facial", false);
             hasNome = getArguments().getBoolean("is_nome", false);
+            servicoMensagem = getArguments().getString("servico_mensagem", "");
         }
         if (themeColor == null || themeColor.isEmpty()) {
             themeColor = sessionManager.getPrimaryColor();
@@ -537,8 +539,8 @@ public class ScreeningFragment extends BaseKioskFragment {
                         args.putBoolean("is_facial", isFacial);
                         args.putBoolean("has_nome", hasNome);
                         args.putString("cliente_nome", nome);
-                        if (response.body().servico != null && response.body().servico.mensagem != null) {
-                            args.putString("servico_mensagem", response.body().servico.mensagem);
+                        if (servicoMensagem != null && !servicoMensagem.isEmpty()) {
+                            args.putString("servico_mensagem", servicoMensagem);
                         }
                     }
 
