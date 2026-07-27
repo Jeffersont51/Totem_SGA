@@ -96,15 +96,16 @@ public class SuccessFragment extends BaseKioskFragment {
                 }
             }
 
-            // btnPrint styling handled by style XML to ensure high contrast
-            
-            android.view.ViewGroup.LayoutParams lpPrint = btnPrint.getLayoutParams();
-            lpPrint.height = (int) (sessionManager.getButtonHeight() * getResources().getDisplayMetrics().density);
-            btnPrint.setLayoutParams(lpPrint);
-            
+            // "IMPRIMIR NOVAMENTE" é um botão de contorno/secundário - usa o
+            // mesmo padrão de altura dos demais botões de contorno do app
+            // (Ajustes do Botão VOLTAR), não a altura do botão principal.
+            setupBackButton(btnPrint, null);
+
             Button btnBackToStart = view.findViewById(R.id.btnBackToStart);
             android.view.View contentContainer = view.findViewById(R.id.llHeader);
-            setupBackButton(btnBackToStart, contentContainer);
+            android.view.ViewGroup.LayoutParams lpBackToStart = btnBackToStart.getLayoutParams();
+            lpBackToStart.height = (int) (sessionManager.getButtonHeight() * getResources().getDisplayMetrics().density);
+            btnBackToStart.setLayoutParams(lpBackToStart);
 
             int textColorVal = android.graphics.Color.parseColor(sessionManager.getBackgroundTextColor());
             TextView tvTitle = view.findViewById(R.id.tvSuccessTitle);

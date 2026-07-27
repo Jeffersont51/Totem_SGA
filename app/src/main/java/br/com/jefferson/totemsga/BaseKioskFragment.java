@@ -86,6 +86,14 @@ public abstract class BaseKioskFragment extends Fragment {
         }
         if (fontSizeSp > 0) btn.setTextSize(fontSizeSp);
 
+        // Quando a altura é customizada, o padding vertical fixo do estilo
+        // (16dp) pode sobrar pouco espaço pro texto caber, cortando-o.
+        // Reduz só o padding vertical, preserva o horizontal (espaçamento do ícone).
+        if (heightDp > 0) {
+            int verticalPadding = (int) (4 * density);
+            btn.setPaddingRelative(btn.getPaddingStart(), verticalPadding, btn.getPaddingEnd(), verticalPadding);
+        }
+
         // Position and Alignment Logic
         if (contentContainer != null && contentContainer.getLayoutParams() instanceof android.widget.LinearLayout.LayoutParams) {
             android.widget.LinearLayout.LayoutParams containerLp = (android.widget.LinearLayout.LayoutParams) contentContainer.getLayoutParams();

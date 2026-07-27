@@ -74,5 +74,14 @@
             android:fontFamily="@font/poppins"
             android:layout_marginTop="4dp"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCardReprint"
+            style="@style/Widget.Totem.Button.Outline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REIMPRIMIR"
+            android:layout_marginTop="12dp"
+            android:visibility="gone"/>
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

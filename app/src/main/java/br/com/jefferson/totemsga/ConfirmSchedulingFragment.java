@@ -321,6 +321,13 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
             ImageView ivHeaderIcon = view.findViewById(R.id.ivHeaderIcon);
             if (ivHeaderIcon != null) ivHeaderIcon.setImageTintList(android.content.res.ColorStateList.valueOf(textColor));
 
+            Button btnSearchButton = view.findViewById(R.id.btnSearch);
+            if (btnSearchButton != null) {
+                android.view.ViewGroup.LayoutParams lpSearch = btnSearchButton.getLayoutParams();
+                lpSearch.height = (int) (sessionManager.getButtonHeight() * getResources().getDisplayMetrics().density);
+                btnSearchButton.setLayoutParams(lpSearch);
+            }
+
             // Dynamic back button positioning
             Button btnBack = view.findViewById(R.id.btnBack);
             View scrollView = view.findViewById(R.id.svConfirmScheduling);
@@ -481,7 +488,7 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
         if (uniqueList.size() == 1) {
             selectedAgendamento = uniqueList.get(0);
             tvResultHeader.setText("Agendamento de hoje encontrado:");
-            btnConfirm.setVisibility(View.VISIBLE);
+            btnConfirm.setVisibility(View.GONE);
         } else {
             selectedAgendamento = null;
             tvResultHeader.setText("Selecione o agendamento para confirmar:");
@@ -493,6 +500,12 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
             updateConfirmationButton(selectedAgendamento);
             
             ((GenericItemAdapter)rvSchedulings.getAdapter()).setSelectedId(selectedAgendamento.id);
+        });
+        adapter.setConfirmListener(item -> {
+            selectedAgendamento = (Agendamento) item;
+            updateConfirmationButton(selectedAgendamento);
+            ((GenericItemAdapter) rvSchedulings.getAdapter()).setSelectedId(selectedAgendamento.id);
+            confirmAgendamento();
         });
         
         // Mark expired items in the adapter
@@ -522,7 +535,7 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
             btnConfirm.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2ECC71")));
             clearError();
         }
-        btnConfirm.setVisibility(View.VISIBLE);
+        btnConfirm.setVisibility(View.GONE);
     }
 
     private void confirmAgendamento() {

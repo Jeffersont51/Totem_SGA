@@ -472,24 +472,22 @@ public class LayoutConfigActivity extends BaseActivity {
         android.content.SharedPreferences.Editor editor = sessionManager.getEditor();
         
         editor.putString("logo_url", etLogoUrl.getText().toString());
-        
-        try {
-            editor.putInt("logo_width", Integer.parseInt(etLogoWidth.getText().toString()));
-            editor.putInt("logo_height", Integer.parseInt(etLogoHeight.getText().toString()));
-            editor.putInt("button_height", Integer.parseInt(etButtonHeight.getText().toString()));
-            editor.putInt("button_font_size", Integer.parseInt(etButtonFontSize.getText().toString()));
-            editor.putInt("back_button_width_percent", Integer.parseInt(etBackWidthPercent.getText().toString()));
-            editor.putInt("back_button_height", Integer.parseInt(etBackHeight.getText().toString()));
-            editor.putInt("back_button_font_size", Integer.parseInt(etBackFontSize.getText().toString()));
-            editor.putInt("back_button_position", spinnerBackPosition.getSelectedItemPosition());
-            editor.putInt("back_button_alignment", spinnerBackAlignment.getSelectedItemPosition());
-            editor.putInt("flow_direction", spinnerFlowDirection.getSelectedItemPosition());
-            editor.putInt("flow_speed", spinnerFlowSpeed.getSelectedItemPosition());
-            editor.putInt("top_gradient_height", Integer.parseInt(etTopGradientHeight.getText().toString()));
-            editor.putInt("bottom_gradient_height", Integer.parseInt(etBottomGradientHeight.getText().toString()));
-            editor.putInt("logo_margin_top", Integer.parseInt(etLogoMarginTop.getText().toString()));
-            editor.putInt("title_margin_top", Integer.parseInt(etTitleMarginTop.getText().toString()));
-        } catch (Exception e) {}
+
+        editor.putInt("logo_width", parseIntField(etLogoWidth, sessionManager.getLogoWidth()));
+        editor.putInt("logo_height", parseIntField(etLogoHeight, sessionManager.getLogoHeight()));
+        editor.putInt("button_height", parseIntField(etButtonHeight, sessionManager.getButtonHeight()));
+        editor.putInt("button_font_size", parseIntField(etButtonFontSize, sessionManager.getButtonFontSize()));
+        editor.putInt("back_button_width_percent", parseIntField(etBackWidthPercent, sessionManager.getBackButtonWidthPercent()));
+        editor.putInt("back_button_height", parseIntField(etBackHeight, sessionManager.getBackButtonHeight()));
+        editor.putInt("back_button_font_size", parseIntField(etBackFontSize, sessionManager.getBackButtonFontSize()));
+        editor.putInt("back_button_position", spinnerBackPosition.getSelectedItemPosition());
+        editor.putInt("back_button_alignment", spinnerBackAlignment.getSelectedItemPosition());
+        editor.putInt("flow_direction", spinnerFlowDirection.getSelectedItemPosition());
+        editor.putInt("flow_speed", spinnerFlowSpeed.getSelectedItemPosition());
+        editor.putInt("top_gradient_height", parseIntField(etTopGradientHeight, sessionManager.getTopGradientHeight()));
+        editor.putInt("bottom_gradient_height", parseIntField(etBottomGradientHeight, sessionManager.getBottomGradientHeight()));
+        editor.putInt("logo_margin_top", parseIntField(etLogoMarginTop, sessionManager.getLogoMarginTop()));
+        editor.putInt("title_margin_top", parseIntField(etTitleMarginTop, sessionManager.getTitleMarginTop()));
 
         editor.putBoolean("sound_enabled", switchSoundEnabled.isChecked());
         editor.putBoolean("group_by_dept", switchGroupByDept.isChecked());
@@ -537,6 +535,14 @@ public class LayoutConfigActivity extends BaseActivity {
         editor.commit(); // Use commit instead of apply for immediate disk write
         Toast.makeText(this, "Configurações de layout salvas", Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private int parseIntField(TextInputEditText field, int fallback) {
+        try {
+            return Integer.parseInt(field.getText().toString().trim());
+        } catch (Exception e) {
+            return fallback;
+        }
     }
 
     private void showColorPicker(String title, String currentColor, ColorSelectedListener listener) {

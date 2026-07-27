@@ -386,7 +386,7 @@ public class ReprintFragment extends BaseKioskFragment {
         llResult.setVisibility(View.VISIBLE);
         if (filteredSenhas.size() == 1) {
             selectedSenha = filteredSenhas.get(0);
-            btnConfirmReprint.setVisibility(View.VISIBLE);
+            btnConfirmReprint.setVisibility(View.GONE);
             tvResultHeader.setText("Senha emitida hoje encontrada:");
         } else {
             selectedSenha = null;
@@ -396,9 +396,13 @@ public class ReprintFragment extends BaseKioskFragment {
 
         GenericItemAdapter adapter = new GenericItemAdapter(filteredSenhas, "#F47B20", null, null, GenericItemAdapter.STYLE_REPRINT, item -> {
             selectedSenha = (SenhaFila) item;
-            btnConfirmReprint.setVisibility(View.VISIBLE);
+            btnConfirmReprint.setVisibility(View.GONE);
             ((GenericItemAdapter)rvResults.getAdapter()).setSelectedId(selectedSenha.id);
             resetInactivityTimer();
+        });
+        adapter.setPrintListener(item -> {
+            resetInactivityTimer();
+            reimprimir((SenhaFila) item);
         });
         rvResults.setAdapter(adapter);
         if (selectedSenha != null) adapter.setSelectedId(selectedSenha.id);

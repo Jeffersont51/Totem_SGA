@@ -36,6 +36,8 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
 
     private List<?> items;
     private OnItemClickListener listener;
+    private OnItemClickListener printListener;
+    private OnItemClickListener confirmListener;
     private String primaryColor;
     private Map<String, String> itemColors;
     private Map<String, String> itemTextColors;
@@ -65,6 +67,14 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
     public void setSelectedId(int id) {
         this.selectedId = id;
         notifyDataSetChanged();
+    }
+
+    public void setPrintListener(OnItemClickListener printListener) {
+        this.printListener = printListener;
+    }
+
+    public void setConfirmListener(OnItemClickListener confirmListener) {
+        this.confirmListener = confirmListener;
     }
 
     public void setExpiredItems(Map<Integer, Boolean> expiredItems) {
@@ -238,6 +248,25 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
             }
             holder.cardAgendamento.setOnClickListener(v -> listener.onItemClick(a));
         }
+
+        if (holder.btnCardReprint != null) {
+            holder.btnCardReprint.setVisibility(View.VISIBLE);
+            holder.btnCardReprint.setStrokeWidth(0);
+            holder.btnCardReprint.setTextColor(Color.WHITE);
+            if (isExpired) {
+                holder.btnCardReprint.setText("VENCIDO");
+                holder.btnCardReprint.setEnabled(false);
+                holder.btnCardReprint.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+                holder.btnCardReprint.setOnClickListener(null);
+            } else {
+                holder.btnCardReprint.setText("CONFIRMAR PRESENÇA");
+                holder.btnCardReprint.setEnabled(true);
+                holder.btnCardReprint.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2ECC71")));
+                holder.btnCardReprint.setOnClickListener(v -> {
+                    if (confirmListener != null) confirmListener.onItemClick(a);
+                });
+            }
+        }
     }
 
     private void bindReprint(ViewHolder holder, br.com.jefferson.totemsga.model.SenhaFila s) {
@@ -256,6 +285,13 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
             }
             holder.cardAgendamento.setOnClickListener(v -> listener.onItemClick(s));
         }
+
+        if (holder.btnCardReprint != null) {
+            holder.btnCardReprint.setVisibility(View.VISIBLE);
+            holder.btnCardReprint.setOnClickListener(v -> {
+                if (printListener != null) printListener.onItemClick(s);
+            });
+        }
     }
 
     @Override
@@ -269,6 +305,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
         ImageView ivIcon, ivChevron;
         FrameLayout flIconContainer;
         View vAccentBar;
+        com.google.android.material.button.MaterialButton btnCardReprint;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -285,6 +322,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
             tvScheduleTime = itemView.findViewById(R.id.tvScheduleTime);
             tvClientName = itemView.findViewById(R.id.tvClientName);
             tvScheduleDate = itemView.findViewById(R.id.tvScheduleDate);
+            btnCardReprint = itemView.findViewById(R.id.btnCardReprint);
         }
     }
 }
