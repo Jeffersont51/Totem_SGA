@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_layout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DIAGNÓSTICO TOTEM SGA"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/diagnosticProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminate="true"/>
+
+    <TextView
+        android:id="@+id/tvProgressStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        android:text="Executando..."
+        android:layout_marginBottom="4dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:background="#EEEEEE"
+        android:layout_marginBottom="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo Impressora:"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp"/>
+        <Spinner
+            android:id="@+id/spinnerPrinterType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/logScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#1E1E1E"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp">
+        <TextView
+            android:id="@+id/tvLogOutput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:textSize="12sp"
+            android:textColor="#00FF00"/>
+    </ScrollView>
+
+    <!-- Linha 1: Ações Principais -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btnAnalyzePrint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="ANALISAR IMPRESSÃO"
+            android:backgroundTint="#6200EE"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_margin="2dp"/>
+        <Button
+            android:id="@+id/btnRunAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Executar Todos"
+            android:layout_margin="2dp"/>
+    </LinearLayout>
+
+    <!-- Linha 2: Hardware -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button android:id="@+id/btnInfo" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Info" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+        <Button android:id="@+id/btnServices" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Serviços" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+        <Button android:id="@+id/btnAllpos" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="ALLPOS" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+        <Button android:id="@+id/btnSunmi" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="SUNMI" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+    </LinearLayout>
+
+    <!-- Linha 3: Software -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button android:id="@+id/btnIntent" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Intent" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+        <Button android:id="@+id/btnHtml" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="HTML" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+        <Button android:id="@+id/btnText" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Texto" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+        <Button android:id="@+id/btnPrintManager" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="PrintMgr" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+    </LinearLayout>
+
+    <!-- Linha 4: Sistema -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button android:id="@+id/btnPkgMgr" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="PkgMgr" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+        <Button android:id="@+id/btnPerms" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Perms" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+        <Button android:id="@+id/btnNet" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Rede" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp"/>
+        <Button android:id="@+id/btnTesteCliente" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Cliente" android:layout_margin="1dp" style="?android:attr/buttonBarButtonStyle" android:textSize="10sp" android:textColor="#FF9800"/>
+    </LinearLayout>
+
+    <!-- Linha 5: Ações Log -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button android:id="@+id/btnClear" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Limpar Log" android:layout_margin="2dp" android:textSize="11sp"/>
+        <Button android:id="@+id/btnCopy" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Copiar Log" android:layout_margin="2dp" android:textSize="11sp"/>
+        <Button android:id="@+id/btnSave" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Salvar Log" android:layout_margin="2dp" android:textSize="11sp"/>
+    </LinearLayout>
+
+    <!-- Linha 6: Exportação -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button android:id="@+id/btnExport" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Exportar Relatório" android:layout_margin="2dp" android:textSize="11sp"/>
+        <Button android:id="@+id/btnShare" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Compartilhar" android:layout_margin="2dp" android:textSize="11sp"/>
+    </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/cbScreeningEnabled"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Habilitar Triagem para este item"
+        android:textSize="16sp"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/cbScreeningRequired"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Triagem Obrigatória"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/cbPriorityEnabled"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Habilitar Escolha de Prioridade"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Se desabilitado, este item ignorará a configuração geral de triagem."
+        android:textSize="12sp"
+        android:textColor="#777777"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- ExoPlayer for Local/Remote MP4 -->
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <!-- Image View -->
+    <ImageView
+        android:id="@+id/ivAdImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerInside"
+        android:visibility="gone" />
+
+    <!-- Letreiro Digital (Faixa Estática) -->
+    <FrameLayout
+        android:id="@+id/flMarqueeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:elevation="10dp">
+
+        <TextView
+            android:id="@+id/tvMarquee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Tire sua senha aqui!"
+            android:singleLine="true"
+            android:ellipsize="none" />
+    </FrameLayout>
+
+    <!-- Overlay to catch touch and return -->
+    <View
+        android:id="@+id/touchOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent" />
+
+</FrameLayout>

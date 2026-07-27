@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/etAdName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nome do Anúncio"
+        android:inputType="text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tipo de Conteúdo"
+        android:layout_marginTop="8dp"/>
+    <Spinner
+        android:id="@+id/spinnerAdType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/etAdUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="URL / Video ID (YouTube)"
+        android:inputType="textUri"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/etAdDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Duração Máxima (segundos)"
+        android:inputType="number"
+        android:layout_marginTop="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp">
+        <EditText
+            android:id="@+id/etAdBgColor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Cor de Fundo (#Hex)"
+            android:inputType="text"/>
+        <View
+            android:id="@+id/vAdColorPreview"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:background="#000000"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CONFIGURAÇÃO DO LETREIRO"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:gravity="center"/>
+
+    <CheckBox
+        android:id="@+id/cbLetreiroHabilitado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Habilitar Letreiro"/>
+
+    <EditText
+        android:id="@+id/etLetreiroMsg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Mensagem (ex: Tire sua senha aqui!)"
+        android:inputType="text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Posição"
+        android:layout_marginTop="8dp"/>
+    <RadioGroup
+        android:id="@+id/rgLetreiroPosicao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/rbTopo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Topo"/>
+        <RadioButton android:id="@+id/rbCentro" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Centro"/>
+        <RadioButton android:id="@+id/rbRodape" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Rodapé"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+        <EditText
+            android:id="@+id/etLetreiroCorFonte"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Cor Fonte"
+            android:inputType="text"/>
+        <EditText
+            android:id="@+id/etLetreiroCorFundo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Cor Fundo"
+            android:inputType="text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+        <EditText
+            android:id="@+id/etLetreiroTamanho"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Tamanho Fonte"
+            android:inputType="number"/>
+        <Spinner
+            android:id="@+id/spinnerLetreiroEstilo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+</LinearLayout>

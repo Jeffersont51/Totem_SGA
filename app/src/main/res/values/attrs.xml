@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="isTop" format="boolean" />
+
+    <declare-styleable name="FlowGradientView">
+        <attr name="isTop" />
+    </declare-styleable>
+
+    <declare-styleable name="StaticWaveView">
+        <attr name="isTop" />
+    </declare-styleable>
+</resources>

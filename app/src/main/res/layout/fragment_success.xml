@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootSuccess"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Top Header Decoration -->
+    <br.com.jefferson.totemsga.util.StaticWaveView
+        android:id="@+id/viewTopDecorationBack"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        app:isTop="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <br.com.jefferson.totemsga.util.FlowGradientView
+        android:id="@+id/viewTopDecoration"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:isTop="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/ivLogoSuccess"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="2dp"
+        android:scaleType="centerInside"
+        android:src="@android:drawable/ic_menu_gallery"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@+id/viewTopDecoration"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:translationZ="10dp"/>
+
+    <!-- Bottom Decoration -->
+    <br.com.jefferson.totemsga.util.StaticWaveView
+        android:id="@+id/viewBottomDecorationBack"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:isTop="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <br.com.jefferson.totemsga.util.FlowGradientView
+        android:id="@+id/viewBottomDecoration"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:isTop="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/llSuccessContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/ivLogoSuccess"
+        app:layout_constraintBottom_toTopOf="@+id/viewBottomDecoration">
+
+        <LinearLayout
+            android:id="@+id/llHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tvSuccessTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Senha Gerada!"
+                android:textSize="28sp"
+                android:fontFamily="@font/poppins"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tvTicketNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A-001"
+                android:textSize="60sp"
+                android:fontFamily="@font/poppins"
+                android:textStyle="bold"
+                android:textColor="#F47B20"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tvSuccessFooter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Por favor, aguarde o seu número no painel."
+                android:textSize="18sp"
+                android:fontFamily="@font/poppins"
+                android:gravity="center"
+                android:textColor="#666666"
+                android:layout_marginBottom="16dp"/>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBackToStart"
+            style="@style/Widget.Totem.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="VOLTAR AO INÍCIO"
+            android:layout_marginBottom="16dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPrint"
+            style="@style/Widget.Totem.Button.Outline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="IMPRIMIR NOVAMENTE"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

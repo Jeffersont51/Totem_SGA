@@ -1,0 +1,22 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+**/build/
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Backups manuais (grandes, redundantes com o histórico do Git)
+BACKUP_V*/
+
+# Relatórios/tarefas do fluxo Gemini (efêmeros, não fazem parte do código)
+BUILD_STATUS.md

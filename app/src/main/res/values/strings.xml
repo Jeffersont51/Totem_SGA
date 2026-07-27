@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TOTEM SGA</string>
+    <string name="btn_reopen_config">CONFIGURAÇÃO INICIAL SERVIDOR</string>
+    <string name="reprint_title">REIMPRIMIR SENHA</string>
+    <string name="reprint_subtitle">Recupere sua senha emitida hoje</string>
+    <string name="reprint_not_found">Nenhuma senha ativa localizada para este documento hoje.</string>
+    <string name="reprint_found">Selecione a senha para reimprimir:</string>
+    <string name="reprint_button">REIMPRIMIR</string>
+</resources>

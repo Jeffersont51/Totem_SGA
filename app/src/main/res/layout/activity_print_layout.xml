@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_layout" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Layout de Impressão"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alinhamento Global"
+                android:textStyle="bold"/>
+            <Spinner
+                android:id="@+id/spinnerPrintAlign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tamanho do Texto (Itens)"
+                android:textStyle="bold"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+                <TextView android:layout_width="120dp" android:layout_height="wrap_content" android:text="Unidade:"/>
+                <Spinner android:id="@+id/spinnerSizeUnit" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+                <TextView android:layout_width="120dp" android:layout_height="wrap_content" android:text="Prioridade:"/>
+                <Spinner android:id="@+id/spinnerSizePriority" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+                <TextView android:layout_width="120dp" android:layout_height="wrap_content" android:text="Senha:"/>
+                <Spinner android:id="@+id/spinnerSizeTicket" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+                <TextView android:layout_width="120dp" android:layout_height="wrap_content" android:text="Serviço:"/>
+                <Spinner android:id="@+id/spinnerSizeService" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+                <TextView android:layout_width="120dp" android:layout_height="wrap_content" android:text="Data/Hora:"/>
+                <Spinner android:id="@+id/spinnerSizeDateTime" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+                <TextView android:layout_width="120dp" android:layout_height="wrap_content" android:text="Nome:"/>
+                <Spinner android:id="@+id/spinnerSizeName" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Visibilidade de Itens"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"/>
+            <CheckBox android:id="@+id/cbShowUnit" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostrar Nome da Unidade"/>
+            <CheckBox android:id="@+id/cbShowPriority" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostrar Nome da Prioridade"/>
+            <CheckBox android:id="@+id/cbShowService" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostrar Nome do Serviço"/>
+            <CheckBox android:id="@+id/cbShowDateTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostrar Data e Hora"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rodapé de Impressão"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"/>
+            <EditText
+                android:id="@+id/etFooterText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Texto do Rodapé"
+                android:inputType="textMultiLine"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+                <TextView android:layout_width="120dp" android:layout_height="wrap_content" android:text="Tamanho Rodapé:"/>
+                <Spinner android:id="@+id/spinnerSizeFooter" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnSavePrintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Salvar Configurações"
+                android:layout_marginTop="24dp"/>
+
+            <Button
+                android:id="@+id/btnTestPrint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="IMPRIMIR TESTE"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardAgendamento"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="2dp"
+    app:strokeColor="#DDDDDD"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_calendar"
+                app:tint="#F47B20"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Ícone de Agendamento"/>
+
+            <TextView
+                android:id="@+id/tvServiceName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SERVIÇO"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins"/>
+
+            <TextView
+                android:id="@+id/tvScheduleTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:textColor="#F47B20"
+                android:fontFamily="@font/poppins"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvClientName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nome do Cliente"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:fontFamily="@font/poppins"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/tvScheduleDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data: 00/00/0000"
+            android:textSize="14sp"
+            android:textColor="#999999"
+            android:fontFamily="@font/poppins"
+            android:layout_marginTop="4dp"/>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,19 @@
+- [x] Criar `BaseActivity.java` com lógica de tema centralizada
+- [x] Criar `res/layout/toolbar_layout.xml`
+- [x] Integrar Toolbar nos layouts das Atividades:
+    - [x] `activity_admin.xml`
+    - [x] `activity_config.xml`
+    - [x] `activity_diagnostic.xml`
+    - [x] `activity_ad_config.xml`
+    - [x] `activity_layout_config.xml`
+    - [x] `activity_print_layout.xml`
+- [x] Refatorar Atividades para herdar de `BaseActivity`:
+    - [x] `MainActivity.java`
+    - [x] `AdminActivity.java`
+    - [x] `ConfigActivity.java`
+    - [x] `DiagnosticActivity.java`
+    - [x] `AdConfigActivity.java`
+    - [x] `LayoutConfigActivity.java`
+    - [x] `PrintLayoutActivity.java`
+- [x] Verificar consistência no `GenericItemAdapter.java`
+- [x] Validar mudanças (compilação e verificação lógica)

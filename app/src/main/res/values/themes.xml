@@ -1,0 +1,44 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.TOTEMSGA" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.TOTEMSGA" parent="Base.Theme.TOTEMSGA" />
+
+    <style name="TextAppearance.App.Title" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.App.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
+    </style>
+
+    <style name="Widget.Totem.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">#F47B20</item>
+        <item name="backgroundTint">#F47B20</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
+        <item name="cornerRadius">100dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Widget.Totem.Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">#F47B20</item>
+        <item name="strokeColor">#F47B20</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
+        <item name="cornerRadius">100dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+</resources>
