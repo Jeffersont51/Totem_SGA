@@ -47,6 +47,19 @@
             android:maxLines="2"
             android:ellipsize="end"/>
 
+        <TextView
+            android:id="@+id/tvItemMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mensagem"
+            android:textColor="#666666"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins"
+            android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

@@ -110,6 +110,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
         }
 
         String name = "";
+        String message = "";
         int id = -1;
         int iconRes = -1;
         boolean showChevron = false;
@@ -123,6 +124,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
         } else if (item instanceof br.com.jefferson.totemsga.model.ServicoUnidade) {
             br.com.jefferson.totemsga.model.ServicoUnidade s = (br.com.jefferson.totemsga.model.ServicoUnidade) item;
             name = s.servico.nome;
+            message = s.mensagem;
             id = s.servico.id;
             iconRes = IconMapper.getServiceIcon(name);
         } else if (item instanceof br.com.jefferson.totemsga.model.Prioridade) {
@@ -133,6 +135,14 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
         }
 
         holder.tvName.setText(name);
+        if (holder.tvMessage != null) {
+            if (message != null && !message.isEmpty()) {
+                holder.tvMessage.setText(message);
+                holder.tvMessage.setVisibility(View.VISIBLE);
+            } else {
+                holder.tvMessage.setVisibility(View.GONE);
+            }
+        }
         
         String itemColor = itemColors.get(String.valueOf(id));
         if (viewStyle == STYLE_HORIZONTAL) {
@@ -300,7 +310,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvServiceName, tvScheduleTime, tvClientName, tvScheduleDate;
+        TextView tvName, tvMessage, tvServiceName, tvScheduleTime, tvClientName, tvScheduleDate;
         com.google.android.material.card.MaterialCardView cardView, cardAgendamento;
         ImageView ivIcon, ivChevron;
         FrameLayout flIconContainer;
@@ -310,6 +320,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvItemName);
+            tvMessage = itemView.findViewById(R.id.tvItemMessage);
             cardView = itemView.findViewById(R.id.cardSelection);
             ivIcon = itemView.findViewById(R.id.ivItemIcon);
             ivChevron = itemView.findViewById(R.id.ivChevron);
