@@ -22,7 +22,24 @@ USB quebrada e o Android dele não tem depuração sem fio: o APK é
 instalado por pendrive e a tela é acessada por RealVNC. Não há como ler
 logcat remotamente.
 
-O histórico de versões fica em `DOCUMENTATION.md`.
+A documentação oficial é o `DOCUMENTATION.md` (operação, parte técnica,
+como compilar/publicar, pendências e histórico de versões). Ao mudar o
+app, atualize-o no mesmo commit. Este arquivo guarda só o contexto de
+investigação que não cabe lá (endpoints não documentados, lições).
+
+Publicar versão nova: compilar, conferir a assinatura, copiar o APK
+para `\\192.168.1.227\Programas TI\TOTEM_SGA` como
+`TOTEM_SGA_v<versionName>.apk`; no totem, Admin > Atualizar aplicativo.
+O passo a passo completo está na seção 15 do `DOCUMENTATION.md`.
+
+Decisões do Jefferson em 07/10/2026 que não devem ser revertidas sem
+perguntar:
+- Impressora sem papel, com tampa aberta ou travada **bloqueia** a
+  emissão de senha (em vez de emitir e só avisar).
+- O atualizador **não guarda** usuário e senha de rede; o técnico de TI
+  digita o próprio acesso a cada atualização.
+- Todas as correções vão num APK só; os testes são feitos por etapas
+  depois de instalar.
 
 ## Stack Técnica
 

@@ -1,3 +1,5 @@
+> **ARQUIVO OBSOLETO (07/10/2026).** O fluxo com o Gemini nao e mais usado: o codigo e o APK sao feitos direto pelo Claude Code. Mantido so como historico. A documentacao atual e o `DOCUMENTATION.md`.
+
 # Tarefa para o Gemini
 
 Duas coisas:
