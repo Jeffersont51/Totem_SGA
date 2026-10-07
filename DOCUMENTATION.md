@@ -293,7 +293,7 @@ Se a compilação falhar com erro de `ANDROID_PREFS_ROOT`, remova essa variável
 
 ## 18. Histórico de versões
 
-### v1.1.7 (07/10/2026) - aguardando teste no totem
+### v1.1.7 (07/10/2026) - instalada e aprovada no totem
 
 Revisão de aparência para uso em totem. Ponto de retorno: marca `ponto-de-retorno-v1.1.6`.
 
@@ -305,7 +305,7 @@ Revisão de aparência para uso em totem. Ponto de retorno: marca `ponto-de-reto
 - Indicador de carregamento na tela de seleção.
 - Mensagem de erro em linguagem de cliente; o código técnico vai para o Diagnóstico.
 
-### v1.1.6 (07/10/2026) - aguardando teste no totem
+### v1.1.6 (07/10/2026) - instalada; papel preso ainda sem confirmação
 
 - Papel preso: `ERRO_GUILHOTINA` passa a bloquear a emissão.
 - Conferência da impressora 3,5 segundos após imprimir, com aviso na tela e registro do estado.
