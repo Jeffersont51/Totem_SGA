@@ -353,7 +353,7 @@ public class ScreeningFragment extends BaseKioskFragment {
             @Override
             public void onFound(br.com.jefferson.totemsga.model.Cliente cliente) {
                 if (isAdded()) {
-                    requireActivity().runOnUiThread(() -> {
+                    runOnUi(() -> {
                         etNome.setText(cliente.nome);
                         if (tvAutoFilledHint != null) {
                             tvAutoFilledHint.setVisibility(View.VISIBLE);
@@ -366,7 +366,7 @@ public class ScreeningFragment extends BaseKioskFragment {
             @Override 
             public void onNotFound() {
                 if (isAdded()) {
-                    requireActivity().runOnUiThread(() -> resetInactivityTimer());
+                    runOnUi(() -> resetInactivityTimer());
                 }
             }
             
@@ -374,7 +374,7 @@ public class ScreeningFragment extends BaseKioskFragment {
             public void onError(String message) {
                 android.util.Log.w("ScreeningFragment", "Autocomplete falhou: " + message);
                 if (isAdded()) {
-                    requireActivity().runOnUiThread(() -> resetInactivityTimer());
+                    runOnUi(() -> resetInactivityTimer());
                 }
             }
         });
@@ -515,10 +515,13 @@ public class ScreeningFragment extends BaseKioskFragment {
 
         ApiService api = RetrofitClient.getInstance(sessionManager);
         if (api == null) return;
+        // Trava contra toque duplo: sem isso, dois toques emitem duas senhas
+        btnGerarSenha.setEnabled(false);
         api.distribui(request).enqueue(new Callback<TicketResponse>() {
             @Override
             public void onResponse(Call<TicketResponse> call, Response<TicketResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (!isAdded()) return;
+                if (response.isSuccessful() && response.body() != null && response.body().senha != null) {
                     String pName = "Normal";
                     for (Prioridade p : prioridadesList) {
                         if (p.id == selectedPrioridadeId) {
@@ -547,12 +550,15 @@ public class ScreeningFragment extends BaseKioskFragment {
                     getParentFragmentManager().beginTransaction()
                             .replace(R.id.container, fragment)
                             .commitAllowingStateLoss();
-                } else { 
+                } else {
+                    btnGerarSenha.setEnabled(true);
                     showError("Não foi possível processar sua solicitação. Tente novamente.");
                 }
             }
             @Override public void onFailure(Call<TicketResponse> call, Throwable t) {
-                showError("Verifique sua internet e tente novamente.");
+                if (!isAdded()) return;
+                btnGerarSenha.setEnabled(true);
+                showError("Sem conexão com o servidor. Tente novamente.");
             }
         });
     }

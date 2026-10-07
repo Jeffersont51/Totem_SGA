@@ -11,10 +11,18 @@ projeto, sem precisar re-descobrir decisões e integrações já validadas.
 (sistema de gerenciamento de filas open-source) rodando em servidor
 local: `http://10.7.0.89`.
 
-O desenvolvimento tem sido feito com apoio de IA (Gemini no Android
-Studio aplicando código; outra IA - Claude - atuando como camada de
-investigação/especificação técnica antes de cada mudança). Este arquivo
-resume o estado técnico consolidado até o momento.
+Desde 07/10/2026 o desenvolvimento é feito direto pelo Claude Code
+(edita o código e gera o APK com `gradlew assembleDebug`). O fluxo
+antigo com o Gemini (`AGENT_PROTOCOL.md` / `TASK_FOR_GEMINI.md` /
+`BUILD_STATUS.md`) não é mais usado; esses arquivos ficaram só como
+histórico.
+
+O totem de homologação (Sunmi K2, IP 192.168.168.139) está com a porta
+USB quebrada e o Android dele não tem depuração sem fio: o APK é
+instalado por pendrive e a tela é acessada por RealVNC. Não há como ler
+logcat remotamente.
+
+O histórico de versões fica em `DOCUMENTATION.md`.
 
 ## Stack Técnica
 
@@ -40,6 +48,11 @@ diferente cada uma. Não confundir:
   token expirado na própria tentativa de renovação, causando falha em
   cascata após ~1h de inatividade. Corrigido com cliente OkHttp "limpo"
   para o refresh + sincronização + keep-alive (ping a cada 30 min).
+- **Segundo bug (07/10/2026, v1.1.0)**: quando o refresh era recusado
+  (refresh vencido ou perdido numa queda de Wi-Fi), o app desistia e
+  ficava em "Falha ao carregar departamentos (401)" até alguém salvar a
+  configuração de novo. Agora cai para `grant_type=password` com as
+  credenciais salvas (`RetrofitClient.renewToken`).
 
 ### 2. Sessão via cookie (`/novosga.triage/*`, `/novosga.monitor/*`)
 - `GET /login` → extrair `_csrf_token` do HTML retornado (regex:
@@ -52,7 +65,9 @@ diferente cada uma. Não confundir:
   de rede do frontend real do NovoSGA).
 - **Sessão deve ser reaproveitada**, não recriada a cada chamada (login
   só na primeira vez ou quando detectada expiração). Lógica encapsulada
-  no Singleton `ClienteAuthManager`.
+  no Singleton `ClienteAuthManager`. Toda chamada nova nessa superfície
+  deve passar por `executeWithSession()`, que detecta a expiração
+  (inclusive HTML de login no lugar do JSON) e refaz o login.
 - Cookies devem ser **mesclados**, não sobrescritos, no `CookieJar`
   customizado (`SessionCookieJar`).
 
@@ -100,7 +115,11 @@ senha, que está em investigação no momento deste registro.
    sobrepostas com offset, uma estática/translúcida atrás, uma animada
    na frente).
 
-## Em investigação / pendente no momento deste registro
+## Reimpressão de senha (implementada)
+
+A reimpressão está funcionando desde o primeiro commit do repositório
+(`ReprintFragment`, busca via `/novosga.monitor/ajax_update`). O texto
+abaixo é o registro da investigação original, mantido como histórico.
 
 - **Tela de reimpressão de senha**: usuário digita documento, app
   busca se há senha emitida para aquele documento no dia, e permite

@@ -20,8 +20,10 @@ public class ClienteAuthManager {
     private static final String TAG = "ClienteAuthManager";
     private static ClienteAuthManager instance;
     private final SessionManager sessionManager;
-    private boolean isLoggedIn = false;
-    
+    private volatile boolean isLoggedIn = false;
+    // Incrementa a cada login bem-sucedido; usado para não refazer login em duplicidade
+    private int sessionGeneration = 0;
+
     private String testUrl;
     private String testUser;
     private String testPass;
@@ -100,35 +102,68 @@ public class ClienteAuthManager {
         return isLoggedIn;
     }
 
+    private interface CallFactory<T> {
+        retrofit2.Call<T> create(ApiService api);
+    }
+
+    private interface ExpiredCheck<T> {
+        boolean isExpired(T body);
+    }
+
+    /**
+     * Executa uma chamada da sessão por cookie. Se a sessão tiver expirado no
+     * servidor (redirect, 401/403, sessionStatus "expired" ou HTML da tela de
+     * login no lugar do JSON), refaz o login e repete a chamada uma vez.
+     */
+    private <T> Response<T> executeWithSession(CallFactory<T> factory, ExpiredCheck<T> expiredCheck) throws Exception {
+        int generation;
+        synchronized (this) {
+            if (!isLoggedIn && !realizarLogin()) {
+                throw new Exception("Falha na autenticação com NovoSGA");
+            }
+            generation = sessionGeneration;
+        }
+
+        ApiService api = RetrofitClient.getAutocompleteInstance(sessionManager, testUrl);
+        if (api == null) {
+            throw new Exception("URL não configurada");
+        }
+
+        try {
+            Response<T> response = factory.create(api).execute();
+            boolean expired = response.code() == 302 || response.code() == 401 || response.code() == 403
+                    || (response.body() != null && expiredCheck.isExpired(response.body()));
+            if (!expired) return response;
+            Log.w(TAG, "⚠️ [Sessão] Expirada (HTTP " + response.code() + "). Refazendo login...");
+        } catch (com.google.gson.JsonParseException | com.google.gson.stream.MalformedJsonException | IllegalStateException e) {
+            // O servidor devolveu o HTML da tela de login onde deveria vir JSON
+            Log.w(TAG, "⚠️ [Sessão] Resposta não é JSON (provável tela de login). Refazendo login...");
+        }
+
+        if (!relogin(generation)) {
+            throw new Exception("Sessão expirada e falha ao relogar");
+        }
+        return factory.create(api).execute();
+    }
+
+    /**
+     * Refaz o login, a menos que outra thread já tenha renovado a sessão depois
+     * da geração vista por quem chamou (evita vários logins em paralelo, um
+     * apagando o cookie do outro).
+     */
+    private synchronized boolean relogin(int seenGeneration) {
+        if (isLoggedIn && sessionGeneration != seenGeneration) return true;
+        isLoggedIn = false;
+        RetrofitClient.clearSession();
+        return realizarLogin();
+    }
+
     public void buscarCliente(String documento, AuthCallback callback) {
         new Thread(() -> {
             try {
-                if (!isLoggedIn) {
-                    if (!realizarLogin()) {
-                        callback.onError("Falha na autenticação com NovoSGA");
-                        return;
-                    }
-                }
-
-                ApiService api = RetrofitClient.getAutocompleteInstance(sessionManager, testUrl);
-                if (api == null) {
-                    callback.onError("URL de Autocomplete não configurada");
-                    return;
-                }
-
-                Response<ClienteResponse> response = api.buscarCliente(documento).execute();
-                
-                // Trata redirecionamento para login (Sessão expirada)
-                if (response.code() == 302 || (response.body() != null && !response.body().success && "expired".equals(response.body().sessionStatus))) {
-                    isLoggedIn = false;
-                    RetrofitClient.clearSession();
-                    if (realizarLogin()) {
-                        response = api.buscarCliente(documento).execute();
-                    } else {
-                        callback.onError("Sessão expirada e falha ao relogar");
-                        return;
-                    }
-                }
+                Response<ClienteResponse> response = executeWithSession(
+                        api -> api.buscarCliente(documento),
+                        body -> !body.success && "expired".equals(body.sessionStatus));
 
                 if (response.isSuccessful() && response.body() != null && response.body().success) {
                     if (response.body().data != null && !response.body().data.isEmpty()) {
@@ -149,31 +184,9 @@ public class ClienteAuthManager {
 
     public void buscarAgendamentosPorServico(int servicoId, AgendamentoCallback callback) {
         try {
-            if (!isLoggedIn) {
-                if (!realizarLogin()) {
-                    callback.onError("Falha na autenticação com NovoSGA");
-                    return;
-                }
-            }
-
-            ApiService api = RetrofitClient.getAutocompleteInstance(sessionManager, testUrl);
-            if (api == null) {
-                callback.onError("URL não configurada");
-                return;
-            }
-
-            retrofit2.Response<AgendamentoResponse> response = api.buscarAgendamentosPorServico(servicoId).execute();
-
-            if (response.code() == 302 || (response.body() != null && !response.body().success && "expired".equals(response.body().sessionStatus))) {
-                isLoggedIn = false;
-                RetrofitClient.clearSession();
-                if (realizarLogin()) {
-                    response = api.buscarAgendamentosPorServico(servicoId).execute();
-                } else {
-                    callback.onError("Sessão expirada");
-                    return;
-                }
-            }
+            retrofit2.Response<AgendamentoResponse> response = executeWithSession(
+                    api -> api.buscarAgendamentosPorServico(servicoId),
+                    body -> !body.success && "expired".equals(body.sessionStatus));
 
             if (response.isSuccessful() && response.body() != null && response.body().success) {
                 if (response.body().data != null && !response.body().data.isEmpty()) {
@@ -194,33 +207,12 @@ public class ClienteAuthManager {
     public void confirmarAgendamento(int agendamentoId, TicketCallback callback) {
         new Thread(() -> {
             try {
-                if (!isLoggedIn) {
-                    if (!realizarLogin()) {
-                        callback.onError("Falha na autenticação com NovoSGA");
-                        return;
-                    }
-                }
+                retrofit2.Response<TicketTriageResponse> response = executeWithSession(
+                        api -> api.confirmarAgendamento(agendamentoId),
+                        body -> !body.success && "expired".equals(body.sessionStatus));
 
-                ApiService api = RetrofitClient.getAutocompleteInstance(sessionManager, testUrl);
-                if (api == null) {
-                    callback.onError("URL não configurada");
-                    return;
-                }
-
-                retrofit2.Response<TicketTriageResponse> response = api.confirmarAgendamento(agendamentoId).execute();
-
-                if (response.code() == 302 || (response.body() != null && response.code() == 401)) {
-                    isLoggedIn = false;
-                    RetrofitClient.clearSession();
-                    if (realizarLogin()) {
-                        response = api.confirmarAgendamento(agendamentoId).execute();
-                    } else {
-                        callback.onError("Sessão expirada");
-                        return;
-                    }
-                }
-
-                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                if (response.isSuccessful() && response.body() != null && response.body().success
+                        && response.body().data != null) {
                     callback.onSuccess(response.body().data);
                 } else {
                     callback.onError("Falha ao confirmar agendamento");
@@ -236,31 +228,9 @@ public class ClienteAuthManager {
     public void buscarSenhasFila(String ids, FilaCallback callback) {
         new Thread(() -> {
             try {
-                if (!isLoggedIn) {
-                    if (!realizarLogin()) {
-                        callback.onError("Falha na autenticação com NovoSGA");
-                        return;
-                    }
-                }
-
-                ApiService api = RetrofitClient.getAutocompleteInstance(sessionManager, testUrl);
-                if (api == null) {
-                    callback.onError("URL não configurada");
-                    return;
-                }
-
-                retrofit2.Response<br.com.jefferson.totemsga.model.SenhasResponse> response = api.buscarSenhasFila(ids).execute();
-
-                if (response.code() == 302 || (response.body() != null && !response.body().success && "expired".equals(response.body().sessionStatus))) {
-                    isLoggedIn = false;
-                    RetrofitClient.clearSession();
-                    if (realizarLogin()) {
-                        response = api.buscarSenhasFila(ids).execute();
-                    } else {
-                        callback.onError("Sessão expirada e falha ao relogar");
-                        return;
-                    }
-                }
+                retrofit2.Response<br.com.jefferson.totemsga.model.SenhasResponse> response = executeWithSession(
+                        api -> api.buscarSenhasFila(ids),
+                        body -> !body.success && "expired".equals(body.sessionStatus));
 
                 if (response.isSuccessful() && response.body() != null && response.body().success) {
                     if (response.body().data != null && response.body().data.senhas != null && !response.body().data.senhas.isEmpty()) {
@@ -426,6 +396,7 @@ public class ClienteAuthManager {
                 Log.d("DEBUG_SGA", "✅ [Login] Passo 4: Autenticação realizada com sucesso!");
                 lastLoginDiagnostic = "OK (Cookies: " + jarAposPost + ")";
                 isLoggedIn = true;
+                sessionGeneration++;
                 return true;
             }
 
@@ -453,6 +424,15 @@ public class ClienteAuthManager {
         // Padrão comum no NovoSGA / Symfony
         Pattern pattern = Pattern.compile("name=\"_csrf_token\"\\s+value=\"([^\"]+)\"");
         Matcher matcher = pattern.matcher(html);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        // Fallback: aspas simples ou atributos em ordem inversa (value antes de name)
+        matcher = Pattern.compile("name=[\"']_csrf_token[\"']\\s+value=[\"']([^\"']+)[\"']").matcher(html);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        matcher = Pattern.compile("value=[\"']([^\"']+)[\"']\\s+name=[\"']_csrf_token[\"']").matcher(html);
         if (matcher.find()) {
             return matcher.group(1);
         }

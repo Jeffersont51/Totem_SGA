@@ -148,6 +148,38 @@ public class SunmiPrinterHelper {
         }
     }
 
+    /** Imprime direto na Sunmi, sem consulta ao servidor. */
+    public static final int ROUTE_NATIVE = 1;
+    /** Sunmi é a impressora em uso, mas está sem papel/tampa aberta: avisar e não imprimir. */
+    public static final int ROUTE_BLOCKED = 2;
+    /** Sunmi indisponível: seguir pelos outros caminhos (AllPos / impressão do Android). */
+    public static final int ROUTE_OTHER = 3;
+
+    /**
+     * Decide o caminho de impressão a partir do tipo configurado no Admin.
+     * - "SUNMI": sempre nativo (o aviso de sem papel/tampa aparece junto).
+     * - "AUTO": nativo se a Sunmi estiver OK; bloqueado se ela existir mas estiver
+     *   sem papel/tampa aberta (antes caía no diálogo de impressão do Android na
+     *   frente do cliente); demais casos seguem o fluxo antigo.
+     */
+    public int resolveRoute(String printerType) {
+        if ("SUNMI".equals(printerType)) return ROUTE_NATIVE;
+        if ("AUTO".equals(printerType) && isConnected()) {
+            int status = getStatus();
+            if (status == 1) return ROUTE_NATIVE;
+            if (status == 4 || status == 6) return ROUTE_BLOCKED;
+        }
+        return ROUTE_OTHER;
+    }
+
+    /** Mensagem para o cliente quando a impressora não consegue imprimir; null se estiver tudo certo. */
+    public String getProblemMessage() {
+        int status = getStatus();
+        if (status == 4) return "Impressora sem papel. Anote sua senha e avise um atendente.";
+        if (status == 6) return "Impressora com a tampa aberta. Anote sua senha e avise um atendente.";
+        return null;
+    }
+
     public String getStatusName() {
         if (tecToy == null) return "DESCONECTADO";
         try {

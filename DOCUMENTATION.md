@@ -85,4 +85,34 @@ A classe `SunmiPrinterHelper` centraliza a comunicação com a impressora térmi
 -   `res/layout`: Arquivos de UI (XML).
 
 ---
-*Documentação gerada em 30 de Julho de 2026.*
+
+## 🔁 Autenticação e Recuperação Automática
+
+O app usa duas autenticações com o NovoSGA, e as duas se recuperam sozinhas:
+
+-   **API OAuth (`/api/*`)**: quando o servidor responde 401, o `RetrofitClient` tenta renovar com o `refresh_token`. Se a renovação for recusada, refaz o login completo com o usuário e a senha salvos na configuração. O endpoint `/api/token` nunca recebe o header `Authorization`.
+-   **Sessão por cookie (`/novosga.triage/*`, `/novosga.monitor/*`)**: `ClienteAuthManager.executeWithSession()` detecta sessão expirada (redirect, 401/403, `sessionStatus = expired` ou HTML da tela de login no lugar do JSON), refaz o login e repete a chamada uma vez.
+-   **Tela de erro**: a tela de seleção tenta carregar de novo sozinha a cada 30 segundos enquanto o erro estiver visível.
+
+---
+
+## 📦 Histórico de Versões
+
+### v1.1.0 (07/10/2026)
+
+Ponto de partida anterior marcado no Git como `ponto-de-partida-2026-10-07` (APK guardado em `BACKUP_V4_PONTO_DE_PARTIDA_2026-10-07/`).
+
+-   **Erro 401 ao carregar departamentos**: o app agora refaz o login sozinho quando a renovação do token é recusada.
+-   **Senha duplicada**: toque duplo em um serviço, em "Gerar senha" ou em "Confirmar presença" não emite mais duas senhas.
+-   **Impressão Sunmi**: imprime direto, sem depender de consulta ao servidor. Sem papel ou tampa aberta aparece aviso na tela da senha; no modo AUTO não abre mais o diálogo de impressão do Android nesses casos.
+-   **Agendamento**: falha de consulta não é mais mostrada como "nenhum agendamento"; sessão expirada é recuperada automaticamente (também no preenchimento automático do nome).
+-   **Fechamentos inesperados**: respostas de rede que chegam depois de o cliente sair da tela são descartadas (`runOnUi`, `safeToast`).
+-   **Reimpressão**: removido o texto técnico "DADOS RECEBIDOS" da tela do cliente.
+-   **Ping de 30 min**: registra falha quando o servidor recusa (antes registrava sucesso em qualquer resposta).
+-   **Rede**: um único cliente HTTP reaproveitado, em vez de um novo a cada consulta.
+-   **Segurança**: log de rede não grava mais senha e tokens; backup do app desligado (`allowBackup=false`); aviso no Admin quando a senha ainda é a padrão; versão exibida no botão de Diagnóstico.
+
+**Pendências conhecidas**: a senha do NovoSGA continua salva sem criptografia nas preferências do app; as telas de teste continuam no APK de desenvolvimento.
+
+---
+*Documentação atualizada em 7 de Outubro de 2026.*

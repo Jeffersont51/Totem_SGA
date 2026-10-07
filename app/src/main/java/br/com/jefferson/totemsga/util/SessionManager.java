@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 public class SessionManager {
     private static final String PREF_NAME = "TotemSGAPrefs";
+    public static final String DEFAULT_ADMIN_PASS = "admin";
     private static final String KEY_ACCESS_TOKEN = "access_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
     private static final String KEY_API_URL = "api_url";
@@ -246,7 +247,7 @@ public class SessionManager {
     public String getBackgroundTextColor() { return pref.getString(KEY_BACKGROUND_TEXT_COLOR, "#000000"); }
     public void setBackgroundTextColor(String color) { editor.putString(KEY_BACKGROUND_TEXT_COLOR, color).apply(); }
 
-    public String getAdminPass() { return pref.getString(KEY_ADMIN_PASS, "admin"); }
+    public String getAdminPass() { return pref.getString(KEY_ADMIN_PASS, DEFAULT_ADMIN_PASS); }
     public void setAdminPass(String pass) { editor.putString(KEY_ADMIN_PASS, pass).apply(); }
 
     public void setLogoUrl(String url) { editor.putString(KEY_LOGO_URL, url).apply(); }

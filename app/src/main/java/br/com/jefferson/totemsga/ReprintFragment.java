@@ -301,7 +301,7 @@ public class ReprintFragment extends BaseKioskFragment {
                     @Override
                     public void onFound(MonitorResponse response) {
                         if (!isAdded()) return;
-                        requireActivity().runOnUiThread(() -> {
+                        runOnUi(() -> {
                             filtrarResultadosMonitor(response.data, input);
                         });
                     }
@@ -309,7 +309,7 @@ public class ReprintFragment extends BaseKioskFragment {
                     @Override
                     public void onNotFound() {
                         if (!isAdded()) return;
-                        requireActivity().runOnUiThread(() -> {
+                        runOnUi(() -> {
                             progressSearch.setVisibility(View.GONE);
                             showError(getString(R.string.reprint_not_found));
                         });
@@ -318,16 +318,16 @@ public class ReprintFragment extends BaseKioskFragment {
                     @Override
                     public void onError(String message) {
                         if (!isAdded()) return;
-                        requireActivity().runOnUiThread(() -> {
+                        runOnUi(() -> {
                             progressSearch.setVisibility(View.GONE);
                             Log.e("DEBUG_SGA", "❌ Detalhes da falha: " + message);
-                            showError("DADOS RECEBIDOS:\n" + message);
+                            showError("Não foi possível buscar a senha agora. Tente novamente.");
                         });
                     }
                 });
             } catch (Exception e) {
                 if (isAdded()) {
-                    requireActivity().runOnUiThread(() -> {
+                    runOnUi(() -> {
                         progressSearch.setVisibility(View.GONE);
                         showError(e.getMessage() != null ? e.getMessage() : "Falha na autenticação");
                     });
@@ -409,12 +409,28 @@ public class ReprintFragment extends BaseKioskFragment {
     }
 
     private void reimprimir(SenhaFila senha) {
+        // Impressora Sunmi: imprime direto, sem depender de consulta ao servidor
+        int sunmiRoute = SunmiPrinterHelper.getInstance().resolveRoute(sessionManager.getPrinterType());
+        if (sunmiRoute == SunmiPrinterHelper.ROUTE_BLOCKED) {
+            showError(SunmiPrinterHelper.getInstance().getProblemMessage());
+            return;
+        }
+        if (sunmiRoute == SunmiPrinterHelper.ROUTE_NATIVE) {
+            printSunmi(senha);
+            String problem = SunmiPrinterHelper.getInstance().getProblemMessage();
+            if (problem != null) showError(problem);
+            return;
+        }
+
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setInteractingWithSystem(true);
         }
 
         ApiService api = RetrofitClient.getInstance(sessionManager);
-        if (api == null) return;
+        if (api == null) {
+            releaseSystemInteraction();
+            return;
+        }
 
         // Se não tiver hash, tentamos com string vazia (o NovoSGA pode permitir se a sessão estiver ativa)
         String hash = (senha.hash != null) ? senha.hash : "";
@@ -426,22 +442,25 @@ public class ReprintFragment extends BaseKioskFragment {
                     try {
                         String html = response.body().string();
                         doPrint(html, senha);
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                        releaseSystemInteraction();
+                    }
                 } else {
-                    Toast.makeText(getContext(), "Erro ao carregar conteúdo de impressão", Toast.LENGTH_SHORT).show();
-                    if (getActivity() instanceof MainActivity) ((MainActivity) getActivity()).setInteractingWithSystem(false);
+                    safeToast("Erro ao carregar conteúdo de impressão");
+                    releaseSystemInteraction();
                 }
             }
 
             @Override
             public void onFailure(Call<okhttp3.ResponseBody> call, Throwable t) {
-                Toast.makeText(getContext(), "Erro de conexão ao imprimir", Toast.LENGTH_SHORT).show();
-                if (getActivity() instanceof MainActivity) ((MainActivity) getActivity()).setInteractingWithSystem(false);
+                safeToast("Erro de conexão ao imprimir");
+                releaseSystemInteraction();
             }
         });
     }
 
     private void doPrint(String html, SenhaFila senha) {
+        if (!isAdded()) return;
         String printerType = sessionManager.getPrinterType();
         boolean isSunmiAvailable = SunmiPrinterHelper.getInstance().isConnected() && SunmiPrinterHelper.getInstance().getStatus() == 1;
 
@@ -469,6 +488,7 @@ public class ReprintFragment extends BaseKioskFragment {
     }
 
     private void doPrintStandard(String html) {
+        if (!isAdded()) return;
         android.webkit.WebView webView = new android.webkit.WebView(requireContext());
         webView.setWebViewClient(new android.webkit.WebViewClient() {
             @Override
@@ -498,7 +518,7 @@ public class ReprintFragment extends BaseKioskFragment {
             helper.printText(sessionManager.getUnidadeNome() + "\n\n");
         }
 
-        if (sessionManager.isPrintShowPriority() && s.prioridade != null) {
+        if (sessionManager.isPrintShowPriority() && s.prioridade != null && s.prioridade.nome != null) {
             helper.setFontSize(sessionManager.getPrintSizePriority());
             helper.printText(s.prioridade.nome + "\n");
         }
@@ -510,7 +530,7 @@ public class ReprintFragment extends BaseKioskFragment {
 
         if (sessionManager.isPrintShowService() && s.servico != null) {
             helper.setFontSize(sessionManager.getPrintSizeService());
-            helper.printText("\n" + s.servico.nome.toUpperCase() + "\n");
+            helper.printText("\n" + (s.servico.nome != null ? s.servico.nome.toUpperCase() : "") + "\n");
         }
 
         ServicoUnidade su = (s.servico != null) ? servicesMap.get(s.servico.id) : null;

@@ -16,7 +16,7 @@ public class SessionCookieJar implements CookieJar {
     private final Map<String, List<Cookie>> cookieStore = new HashMap<>();
 
     @Override
-    public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
+    public synchronized void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
         if (cookies.isEmpty()) return;
 
         // Mescla por nome em vez de sobrescrever: uma resposta sem Set-Cookie
@@ -39,16 +39,16 @@ public class SessionCookieJar implements CookieJar {
 
     @NonNull
     @Override
-    public List<Cookie> loadForRequest(@NonNull HttpUrl url) {
+    public synchronized List<Cookie> loadForRequest(@NonNull HttpUrl url) {
         List<Cookie> cookies = cookieStore.get(url.host());
-        return cookies != null ? cookies : new ArrayList<>();
+        return cookies != null ? new ArrayList<>(cookies) : new ArrayList<>();
     }
 
-    public void clear() {
+    public synchronized void clear() {
         cookieStore.clear();
     }
 
-    public String debugDump(String host) {
+    public synchronized String debugDump(String host) {
         List<Cookie> cookies = cookieStore.get(host);
         if (cookies == null || cookies.isEmpty()) return "(nenhum cookie armazenado para " + host + ")";
         StringBuilder sb = new StringBuilder();

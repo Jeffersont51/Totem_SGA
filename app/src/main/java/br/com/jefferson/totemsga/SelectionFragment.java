@@ -220,6 +220,13 @@ public class SelectionFragment extends BaseKioskFragment {
         }
     }
 
+    private static final long AUTO_RETRY_MS = 30_000;
+    private boolean isIssuingTicket = false;
+    private final android.os.Handler retryHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable autoRetryRunnable = () -> {
+        if (isAdded() && llError != null && llError.getVisibility() == View.VISIBLE) reload();
+    };
+
     private void fetchDepartments() {
         ApiService api = RetrofitClient.getInstance(sessionManager);
         if (api == null) return;
@@ -297,12 +304,29 @@ public class SelectionFragment extends BaseKioskFragment {
             btnRetry.setTextColor(tColor);
             tvErrorMessage.setTextColor(android.graphics.Color.parseColor(sessionManager.getBackgroundTextColor()));
         } catch (Exception e) {}
+
+        // Tenta de novo sozinho: o totem não pode ficar parado na tela de erro
+        // esperando alguém tocar em "Tentar novamente".
+        retryHandler.removeCallbacks(autoRetryRunnable);
+        retryHandler.postDelayed(autoRetryRunnable, AUTO_RETRY_MS);
     }
 
     private void hideError() {
+        retryHandler.removeCallbacks(autoRetryRunnable);
         if (!isAdded()) return;
         recyclerView.setVisibility(View.VISIBLE);
         llError.setVisibility(View.GONE);
+    }
+
+    private void reload() {
+        if (type == 1) fetchDepartments();
+        else fetchServices();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        retryHandler.removeCallbacks(autoRetryRunnable);
     }
 
     private void setAdapter(List<?> items) {
@@ -478,10 +502,15 @@ public class SelectionFragment extends BaseKioskFragment {
 
         ApiService api = RetrofitClient.getInstance(sessionManager);
         if (api == null) return;
+        // Trava contra toque duplo: sem isso, dois toques no serviço emitem duas senhas
+        if (isIssuingTicket) return;
+        isIssuingTicket = true;
         api.distribui(request).enqueue(new Callback<br.com.jefferson.totemsga.model.TicketResponse>() {
             @Override
             public void onResponse(Call<br.com.jefferson.totemsga.model.TicketResponse> call, Response<br.com.jefferson.totemsga.model.TicketResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                isIssuingTicket = false;
+                if (!isAdded()) return;
+                if (response.isSuccessful() && response.body() != null && response.body().senha != null) {
                     SuccessFragment fragment = SuccessFragment.newInstance(
                             response.body().senha.format,
                             response.body().id,
@@ -504,9 +533,14 @@ public class SelectionFragment extends BaseKioskFragment {
                     getParentFragmentManager().beginTransaction()
                             .replace(R.id.container, fragment)
                             .commitAllowingStateLoss();
+                } else {
+                    safeToast("Não foi possível gerar a senha. Tente novamente.");
                 }
             }
-            @Override public void onFailure(Call<br.com.jefferson.totemsga.model.TicketResponse> call, Throwable t) {}
+            @Override public void onFailure(Call<br.com.jefferson.totemsga.model.TicketResponse> call, Throwable t) {
+                isIssuingTicket = false;
+                safeToast("Sem conexão com o servidor. Tente novamente.");
+            }
         });
     }
 
@@ -534,12 +568,10 @@ public class SelectionFragment extends BaseKioskFragment {
                             break;
                         }
                     }
-                    if (isAdded()) {
-                        final boolean finalEnabled = enabled;
-                        requireActivity().runOnUiThread(() -> {
-                            if (cardReprint != null) cardReprint.setVisibility(finalEnabled ? View.VISIBLE : View.GONE);
-                        });
-                    }
+                    final boolean finalEnabled = enabled;
+                    runOnUi(() -> {
+                        if (cardReprint != null) cardReprint.setVisibility(finalEnabled ? View.VISIBLE : View.GONE);
+                    });
                 }
             }
             @Override public void onFailure(Call<List<ServicoUnidade>> call, Throwable t) {}

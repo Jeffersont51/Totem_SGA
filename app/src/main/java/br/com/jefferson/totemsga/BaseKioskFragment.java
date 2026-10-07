@@ -180,6 +180,34 @@ public abstract class BaseKioskFragment extends Fragment {
         return false;
     }
 
+    /**
+     * Executa na thread de UI somente se a tela ainda estiver ativa. Respostas de
+     * rede podem chegar depois que o cliente saiu da tela (ou o tempo esgotou);
+     * nesse caso a ação é descartada em vez de derrubar o app.
+     */
+    protected void runOnUi(Runnable action) {
+        android.app.Activity activity = getActivity();
+        if (activity == null || !isAdded()) return;
+        activity.runOnUiThread(() -> {
+            if (isAdded() && getView() != null) action.run();
+        });
+    }
+
+    /** Toast que não derruba o app se a tela já tiver sido fechada. */
+    protected void safeToast(String message) {
+        android.content.Context ctx = getContext();
+        if (ctx != null && isAdded()) {
+            android.widget.Toast.makeText(ctx, message, android.widget.Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /** Devolve o controle do modo Kiosk depois de uma impressão/diálogo do sistema. */
+    protected void releaseSystemInteraction() {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setInteractingWithSystem(false);
+        }
+    }
+
     protected void onInactivityTimeout() {
         if (isAdded() && !getParentFragmentManager().isStateSaved()) {
             if (sessionManager.isAdsEnabled()) {

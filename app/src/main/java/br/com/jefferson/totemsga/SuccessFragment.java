@@ -122,8 +122,9 @@ public class SuccessFragment extends BaseKioskFragment {
                 btnPrint.setVisibility(View.VISIBLE);
                 btnPrint.setOnClickListener(v -> printTicket());
                 
-                // Opção: Auto-print ao carregar
-                printTicket();
+                // Opção: Auto-print ao carregar (após a tela existir, para poder
+                // mostrar nela o aviso de impressora sem papel/tampa aberta)
+                view.post(this::printTicket);
             }
         }
 
@@ -135,6 +136,20 @@ public class SuccessFragment extends BaseKioskFragment {
 
     private void printTicket() {
         if (getArguments() == null) return;
+
+        // Impressora Sunmi: todos os dados já estão no app, então imprime direto.
+        // Antes a impressão dependia de uma consulta ao servidor que só serve para
+        // os outros tipos de impressora; se ela falhasse, o papel não saía.
+        int sunmiRoute = SunmiPrinterHelper.getInstance().resolveRoute(sessionManager.getPrinterType());
+        if (sunmiRoute == SunmiPrinterHelper.ROUTE_BLOCKED) {
+            showPrinterProblem(SunmiPrinterHelper.getInstance().getProblemMessage());
+            return;
+        }
+        if (sunmiRoute == SunmiPrinterHelper.ROUTE_NATIVE) {
+            printSunmiTicket();
+            showPrinterProblem(SunmiPrinterHelper.getInstance().getProblemMessage());
+            return;
+        }
         
         // Notifica Activity para suspender Kiosk temporariamente durante o diálogo de impressão
         if (getActivity() instanceof MainActivity) {
@@ -145,7 +160,10 @@ public class SuccessFragment extends BaseKioskFragment {
         String hash = getArguments().getString(ARG_HASH);
 
         ApiService api = RetrofitClient.getInstance(sessionManager);
-        if (api == null) return;
+        if (api == null) {
+            releaseSystemInteraction();
+            return;
+        }
         api.getPrintContent(id, hash).enqueue(new Callback<okhttp3.ResponseBody>() {
             @Override
             public void onResponse(Call<okhttp3.ResponseBody> call, Response<okhttp3.ResponseBody> response) {
@@ -154,13 +172,32 @@ public class SuccessFragment extends BaseKioskFragment {
                         String html = response.body().string();
                         Logger.getInstance().setLastHtml(html);
                         doPrint(html); 
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                        Logger.getInstance().e("PRINT", "Falha ao preparar impressão", e);
+                        releaseSystemInteraction();
+                    }
+                } else {
+                    Logger.getInstance().e("PRINT", "Servidor recusou o conteúdo de impressão (HTTP " + response.code() + ")");
+                    showPrinterProblem("Não foi possível imprimir. Anote sua senha e avise um atendente.");
+                    releaseSystemInteraction();
                 }
             }
             @Override public void onFailure(Call<okhttp3.ResponseBody> call, Throwable t) {
-                Toast.makeText(getContext(), "Erro ao imprimir", Toast.LENGTH_SHORT).show();
+                Logger.getInstance().e("PRINT", "Falha de rede ao buscar conteúdo de impressão", t);
+                showPrinterProblem("Não foi possível imprimir. Anote sua senha e avise um atendente.");
+                releaseSystemInteraction();
             }
         });
+    }
+
+    /** Mostra o problema de impressão na própria tela da senha (no lugar do rodapé). */
+    private void showPrinterProblem(String message) {
+        if (message == null || !isAdded() || getView() == null) return;
+        TextView tvFooter = getView().findViewById(R.id.tvSuccessFooter);
+        if (tvFooter != null) {
+            tvFooter.setText(message);
+            tvFooter.setTextColor(android.graphics.Color.parseColor("#E31E24"));
+        }
     }
 
     private void doPrint(String html) {
@@ -174,9 +211,7 @@ public class SuccessFragment extends BaseKioskFragment {
         if ("SUNMI".equals(printerType) || ("AUTO".equals(printerType) && isSunmiAvailable)) {
             printSunmiTicket();
             // Para Sunmi nativa não há diálogo de sistema, podemos restaurar Kiosk rápido
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).setInteractingWithSystem(false);
-            }
+            releaseSystemInteraction();
             return;
         }
 
@@ -202,7 +237,7 @@ public class SuccessFragment extends BaseKioskFragment {
             } catch (Exception e) {
                 Logger.getInstance().e("PRINT", "Falha ao chamar AllPos", e);
                 if ("ALLPOS".equals(printerType)) {
-                    Toast.makeText(getContext(), "Erro ao abrir AllPos", Toast.LENGTH_SHORT).show();
+                    safeToast("Erro ao abrir AllPos");
                 }
             }
         }
@@ -237,7 +272,7 @@ public class SuccessFragment extends BaseKioskFragment {
                     }, 8000);
 
                 } catch (Exception e) {
-                    if (isAdded()) Toast.makeText(getContext(), "Erro no Spooler de Impressão", Toast.LENGTH_SHORT).show();
+                    safeToast("Erro no Spooler de Impressão");
                     if (getActivity() instanceof MainActivity) {
                         ((MainActivity) getActivity()).setInteractingWithSystem(false);
                     }
@@ -274,7 +309,7 @@ public class SuccessFragment extends BaseKioskFragment {
         // Senha (Grande)
         helper.setFontSize(sessionManager.getPrintSizeTicket());
         helper.setBold(true);
-        helper.printText("\n" + ticket + "\n");
+        helper.printText("\n" + (ticket != null ? ticket : "") + "\n");
         helper.setBold(false);
         
         // Nome do Serviço

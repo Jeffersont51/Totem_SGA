@@ -290,10 +290,17 @@ public class MainActivity extends BaseActivity implements AdManager.AdListener {
         if (api != null) {
             api.getUnidades().enqueue(new retrofit2.Callback<java.util.List<br.com.jefferson.totemsga.model.Unidade>>() {
                 @Override public void onResponse(retrofit2.Call<java.util.List<br.com.jefferson.totemsga.model.Unidade>> call, retrofit2.Response<java.util.List<br.com.jefferson.totemsga.model.Unidade>> response) {
-                    android.util.Log.d("MainActivity", "Ping realizado com sucesso (Unidades)");
+                    // Chegar resposta não significa sucesso: um 401 também cai aqui.
+                    if (response.isSuccessful()) {
+                        android.util.Log.d("MainActivity", "Ping realizado com sucesso (Unidades)");
+                    } else {
+                        br.com.jefferson.totemsga.util.Logger.getInstance().e("PING",
+                                "Servidor recusou o ping (HTTP " + response.code() + "). Autenticação pode estar inválida.");
+                    }
                 }
                 @Override public void onFailure(retrofit2.Call<java.util.List<br.com.jefferson.totemsga.model.Unidade>> call, Throwable t) {
                     android.util.Log.e("MainActivity", "Falha no Ping: " + t.getMessage());
+                    br.com.jefferson.totemsga.util.Logger.getInstance().e("PING", "Sem resposta do servidor: " + t.getMessage());
                 }
             });
         }

@@ -81,6 +81,7 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
     private Agendamento selectedAgendamento;
     private final Gson gson = new Gson();
     private boolean isApplyingMask = false;
+    private volatile boolean isConfirming = false;
 
     private int secondsRemaining;
     private final Handler timerHandler = new Handler(Looper.getMainLooper());
@@ -358,7 +359,7 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
                 ApiService api = RetrofitClient.getInstance(sessionManager);
                 if (api == null) {
                     Log.e("AGENDAMENTO", "❌ [Config] ApiService é nulo.");
-                    requireActivity().runOnUiThread(() -> showError("Erro", "API não configurada"));
+                    runOnUi(() -> showError("Erro", "API não configurada"));
                     return;
                 }
 
@@ -367,7 +368,7 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
                 Response<List<ServicoUnidade>> svcResponse = api.getServicos(sessionManager.getUnidadeId()).execute();
                 if (!svcResponse.isSuccessful() || svcResponse.body() == null) {
                     Log.e("AGENDAMENTO", "❌ [API] Falha ao carregar serviços. Code: " + svcResponse.code());
-                    requireActivity().runOnUiThread(() -> showError("Erro", "Falha ao carregar serviços da unidade"));
+                    runOnUi(() -> showError("Erro", "Falha ao carregar serviços da unidade"));
                     return;
                 }
 
@@ -388,12 +389,15 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
 
                 if (ativos.isEmpty()) {
                     Log.w("AGENDAMENTO", "⚠️ [Aviso] Nenhum serviço ativo para esta unidade.");
-                    requireActivity().runOnUiThread(() -> showError("Aviso", "Nenhum serviço ativo encontrado"));
+                    runOnUi(() -> showError("Aviso", "Nenhum serviço ativo encontrado"));
                     return;
                 }
 
                 filteredList.clear();
                 CountDownLatch latch = new CountDownLatch(ativos.size());
+                // Conta consultas que falharam: falha de consulta não pode ser mostrada
+                // ao cliente como "nenhum agendamento".
+                final java.util.concurrent.atomic.AtomicInteger falhas = new java.util.concurrent.atomic.AtomicInteger(0);
                 ExecutorService executor = Executors.newFixedThreadPool(Math.min(ativos.size(), 5));
 
                 for (ServicoUnidade su : ativos) {
@@ -431,11 +435,13 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
                                 @Override
                                 public void onError(String message) {
                                     Log.e("AGENDAMENTO", "❌ [Erro] Serviço " + su.servico.nome + ": " + message);
+                                    falhas.incrementAndGet();
                                     latch.countDown();
                                 }
                             });
                         } catch (Exception e) {
                             Log.e("AGENDAMENTO", "❌ [Crash] Thread do serviço " + su.servico.nome, e);
+                            falhas.incrementAndGet();
                             latch.countDown();
                         }
                     });
@@ -445,14 +451,19 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
                 boolean finished = latch.await(20, TimeUnit.SECONDS);
                 executor.shutdown();
 
-                requireActivity().runOnUiThread(() -> {
+                runOnUi(() -> {
                     progressSearch.setVisibility(View.GONE);
                     Log.d("AGENDAMENTO", "✅ Busca finalizada. Encontrados: " + filteredList.size() + " | Completo: " + finished);
 
                     if (filteredList.isEmpty()) {
-                        String msg = finished ? 
-                            "Nenhum agendamento pendente localizado para hoje com este " + getDocumentTypeName() + "." :
-                            "Tempo de busca excedido. Tente novamente.";
+                        String msg;
+                        if (!finished) {
+                            msg = "Tempo de busca excedido. Tente novamente.";
+                        } else if (falhas.get() > 0) {
+                            msg = "Não foi possível consultar os agendamentos agora. Tente novamente ou procure o balcão de atendimento.";
+                        } else {
+                            msg = "Nenhum agendamento pendente localizado para hoje com este " + getDocumentTypeName() + ".";
+                        }
                         showError("Busca", msg);
                     } else {
                         showResults();
@@ -461,7 +472,7 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
 
             } catch (Exception e) {
                 Log.e("AGENDAMENTO", "Erro no processo de busca", e);
-                requireActivity().runOnUiThread(() -> {
+                runOnUi(() -> {
                     progressSearch.setVisibility(View.GONE);
                     showError("Erro", "Falha: " + e.getMessage());
                 });
@@ -482,7 +493,7 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
         List<Agendamento> uniqueList;
         synchronized (filteredList) {
             uniqueList = new ArrayList<>(new HashSet<>(filteredList));
-            Collections.sort(uniqueList, (o1, o2) -> o1.hora.compareTo(o2.hora));
+            Collections.sort(uniqueList, (o1, o2) -> (o1.hora != null ? o1.hora : "").compareTo(o2.hora != null ? o2.hora : ""));
         }
 
         if (uniqueList.size() == 1) {
@@ -540,6 +551,9 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
 
     private void confirmAgendamento() {
         if (selectedAgendamento == null) return;
+        // Trava contra toque duplo no botão de confirmar do card
+        if (isConfirming) return;
+        isConfirming = true;
 
         btnConfirm.setEnabled(false);
         progressSearch.setVisibility(View.VISIBLE);
@@ -547,9 +561,16 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
         ClienteAuthManager.getInstance(sessionManager).confirmarAgendamento(selectedAgendamento.id, new ClienteAuthManager.TicketCallback() {
             @Override
             public void onSuccess(TicketResponse response) {
-                if (!isAdded()) return;
-                requireActivity().runOnUiThread(() -> {
+                isConfirming = false;
+                runOnUi(() -> {
                     progressSearch.setVisibility(View.GONE);
+
+                    if (response == null || response.senha == null || selectedAgendamento == null
+                            || selectedAgendamento.servico == null) {
+                        btnConfirm.setEnabled(true);
+                        showError("Erro na Confirmação", "Não foi possível confirmar a presença. Procure o balcão de atendimento.");
+                        return;
+                    }
                     
                     String pName = (response.prioridade != null && response.prioridade.nome != null) 
                             ? response.prioridade.nome : "Normal";
@@ -567,7 +588,7 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
                     );
                     Bundle args = fragment.getArguments();
                     if (args != null) {
-                        args.putString("cliente_nome", selectedAgendamento.cliente.nome);
+                        args.putString("cliente_nome", selectedAgendamento.cliente != null && selectedAgendamento.cliente.nome != null ? selectedAgendamento.cliente.nome : "");
                         args.putBoolean("has_nome", true);
                         args.putBoolean("is_facial", isFacial);
                         ServicoUnidade suConfirm = servicesMap.get(selectedAgendamento.servico.id);
@@ -584,11 +605,11 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
 
             @Override
             public void onError(String message) {
-                if (!isAdded()) return;
-                requireActivity().runOnUiThread(() -> {
+                isConfirming = false;
+                runOnUi(() -> {
                     btnConfirm.setEnabled(true);
                     progressSearch.setVisibility(View.GONE);
-                    showError("Erro na Confirmação", message);
+                    showError("Erro na Confirmação", "Não foi possível confirmar a presença agora. Tente novamente ou procure o balcão de atendimento.");
                 });
             }
         });

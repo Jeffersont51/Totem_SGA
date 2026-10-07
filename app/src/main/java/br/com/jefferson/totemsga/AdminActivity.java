@@ -100,6 +100,27 @@ public class AdminActivity extends BaseActivity {
         btnSave.setOnClickListener(v -> saveSettings());
 
         styleButtons(btnSave);
+
+        showVersion();
+        warnDefaultAdminPass();
+    }
+
+    // Mostra a versão instalada no botão de Diagnóstico, para saber qual APK está em cada totem
+    private void showVersion() {
+        try {
+            String version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            btnDiagnostic.setText(btnDiagnostic.getText() + " (v" + version + ")");
+        } catch (Exception e) {}
+    }
+
+    private void warnDefaultAdminPass() {
+        if (!SessionManager.DEFAULT_ADMIN_PASS.equals(sessionManager.getAdminPass())) return;
+        new AlertDialog.Builder(this)
+                .setTitle("Senha padrão em uso")
+                .setMessage("A senha de acesso ao Admin ainda é a senha padrão de fábrica. "
+                        + "Troque no campo de senha do Admin e toque em Salvar.")
+                .setPositiveButton("Entendi", null)
+                .show();
     }
 
     private void requestAdminPermission() {
