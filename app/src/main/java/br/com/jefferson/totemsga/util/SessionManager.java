@@ -250,6 +250,18 @@ public class SessionManager {
     public String getAdminPass() { return pref.getString(KEY_ADMIN_PASS, DEFAULT_ADMIN_PASS); }
     public void setAdminPass(String pass) { editor.putString(KEY_ADMIN_PASS, pass).apply(); }
 
+    // Atualização do app pela pasta de rede
+    public static final String DEFAULT_UPDATE_PATH = "\\\\192.168.1.227\\Programas TI\\TOTEM_SGA";
+    public String getUpdatePath() { return pref.getString("update_path", DEFAULT_UPDATE_PATH); }
+    public String getUpdateUser() { return pref.getString("update_user", ""); }
+    public String getUpdatePass() { return pref.getString("update_pass", ""); }
+    public void saveUpdateSource(String path, String user, String pass) {
+        editor.putString("update_path", path);
+        editor.putString("update_user", user);
+        editor.putString("update_pass", pass);
+        editor.apply();
+    }
+
     public void setLogoUrl(String url) { editor.putString(KEY_LOGO_URL, url).apply(); }
     public void setGroupByDept(boolean group) { editor.putBoolean(KEY_GROUP_BY_DEPT, group).apply(); }
     public void setSelectedDepts(String depts) { editor.putString(KEY_SELECTED_DEPTS, depts).apply(); }

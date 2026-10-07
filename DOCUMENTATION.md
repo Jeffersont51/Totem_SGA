@@ -98,6 +98,12 @@ O app usa duas autenticações com o NovoSGA, e as duas se recuperam sozinhas:
 
 ## 📦 Histórico de Versões
 
+### v1.1.3 e v1.1.4 (07/10/2026)
+
+-   **Atualização pela pasta de rede**: botão "Atualizar aplicativo" no Admin. Lê uma pasta compartilhada do Windows (padrão `\\192.168.1.227\Programas TI\TOTEM_SGA`), escolhe o APK de maior versão **pelo nome do arquivo** (`TOTEM_SGA_v1.2.3.apk`), baixa, confere (mesmo pacote, mesma assinatura, versão não menor) e abre o instalador do Android. Usuário e senha de rede são digitados no próprio totem e ficam salvos nas preferências. Código em `util/AppUpdater.java` (biblioteca `smbj`).
+-   A v1.1.4 é idêntica à v1.1.3, só com o número de versão maior, publicada na pasta de rede para testar a atualização.
+-   **Para publicar uma versão nova**: copiar o APK para a pasta de rede com a versão no nome. O `versionName` do `build.gradle.kts` e o nome do arquivo precisam ser iguais.
+
 ### v1.1.2 (07/10/2026)
 
 -   **Impressora sem papel ou com a tampa aberta bloqueia a emissão** (decisão do Jefferson): com a impressão ligada, o app não gera senha nem confirma agendamento nesses dois estados, e mostra "Impressora indisponível, avise um atendente". Estado indefinido da impressora não bloqueia. Verificação em `BaseKioskFragment.printerBlockMessage()`.

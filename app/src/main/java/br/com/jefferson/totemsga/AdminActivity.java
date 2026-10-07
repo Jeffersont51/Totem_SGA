@@ -98,6 +98,7 @@ public class AdminActivity extends BaseActivity {
             startActivity(intent);
         });
         btnSave.setOnClickListener(v -> saveSettings());
+        findViewById(R.id.btnUpdateApp).setOnClickListener(v -> showUpdateDialog());
 
         styleButtons(btnSave);
 
@@ -111,6 +112,164 @@ public class AdminActivity extends BaseActivity {
             String version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
             btnDiagnostic.setText(btnDiagnostic.getText() + " (v" + version + ")");
         } catch (Exception e) {}
+    }
+
+    // ---------- Atualização do app pela pasta de rede ----------
+
+    private void showUpdateDialog() {
+        float density = getResources().getDisplayMetrics().density;
+        int pad = (int) (20 * density);
+
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(pad, pad / 2, pad, 0);
+
+        final EditText etPath = new EditText(this);
+        etPath.setHint("Pasta de rede (\\\\servidor\\pasta)");
+        etPath.setSingleLine(true);
+        etPath.setText(sessionManager.getUpdatePath());
+        box.addView(etPath);
+
+        final EditText etUser = new EditText(this);
+        etUser.setHint("Usuário de rede (ex: ALVORADA\\usuario)");
+        etUser.setSingleLine(true);
+        etUser.setText(sessionManager.getUpdateUser());
+        box.addView(etUser);
+
+        final EditText etPass = new EditText(this);
+        etPass.setHint("Senha de rede");
+        etPass.setSingleLine(true);
+        etPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        etPass.setText(sessionManager.getUpdatePass());
+        box.addView(etPass);
+
+        final android.widget.TextView tvStatus = new android.widget.TextView(this);
+        tvStatus.setPadding(0, pad / 2, 0, 0);
+        tvStatus.setText("Versão instalada: " + installedVersion());
+        box.addView(tvStatus);
+
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Atualizar aplicativo")
+                .setView(box)
+                .setPositiveButton("Verificar", null)
+                .setNegativeButton("Fechar", null)
+                .create();
+
+        dialog.setOnShowListener(d -> {
+            final Button btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            btn.setOnClickListener(v -> {
+                String path = etPath.getText().toString().trim();
+                String user = etUser.getText().toString().trim();
+                String pass = etPass.getText().toString();
+                sessionManager.saveUpdateSource(path, user, pass);
+                runUpdate(dialog, btn, tvStatus, path, user, pass);
+            });
+        });
+        dialog.show();
+    }
+
+    private String installedVersion() {
+        try {
+            return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (Exception e) {
+            return "?";
+        }
+    }
+
+    /** 1º toque: procura a versão na pasta. 2º toque (se houver mais nova): baixa e instala. */
+    private br.com.jefferson.totemsga.util.AppUpdater.Found pendingUpdate;
+
+    private void runUpdate(AlertDialog dialog, Button btn, android.widget.TextView tvStatus, String path, String user, String pass) {
+        final br.com.jefferson.totemsga.util.AppUpdater.Found toInstall = pendingUpdate;
+        pendingUpdate = null;
+        btn.setEnabled(false);
+        tvStatus.setText(toInstall == null ? "Conectando à pasta de rede..." : "Baixando " + toInstall.fileName + "...");
+
+        new Thread(() -> {
+            try {
+                if (toInstall == null) {
+                    br.com.jefferson.totemsga.util.AppUpdater.Found found =
+                            br.com.jefferson.totemsga.util.AppUpdater.findLatest(path, user, pass);
+                    runOnUiThread(() -> {
+                        if (isFinishing() || !dialog.isShowing()) return;
+                        btn.setEnabled(true);
+                        String installed = installedVersion();
+                        if (found == null) {
+                            tvStatus.setText("Nenhum APK encontrado na pasta.\nVersão instalada: " + installed);
+                        } else if (br.com.jefferson.totemsga.util.AppUpdater.compareVersions(found.version, installed) > 0) {
+                            pendingUpdate = found;
+                            btn.setText("Baixar e instalar");
+                            tvStatus.setText("Versão instalada: " + installed
+                                    + "\nDisponível na pasta: " + found.version + " (" + found.fileName + ")");
+                        } else {
+                            tvStatus.setText("O aplicativo já está atualizado.\nVersão instalada: " + installed
+                                    + "\nMais recente na pasta: " + found.version);
+                        }
+                    });
+                    return;
+                }
+
+                java.io.File apk = br.com.jefferson.totemsga.util.AppUpdater.download(this, path, user, pass, toInstall,
+                        percent -> runOnUiThread(() -> {
+                            if (dialog.isShowing()) tvStatus.setText("Baixando " + toInstall.fileName + "... " + percent + "%");
+                        }));
+
+                String problem = br.com.jefferson.totemsga.util.AppUpdater.validate(this, apk);
+                runOnUiThread(() -> {
+                    if (isFinishing() || !dialog.isShowing()) return;
+                    btn.setEnabled(true);
+                    btn.setText("Verificar");
+                    if (problem != null) {
+                        tvStatus.setText(problem);
+                        return;
+                    }
+                    tvStatus.setText("Download concluído. Confirme a instalação na tela do Android.");
+                    launchInstaller(apk);
+                });
+            } catch (Throwable e) {
+                // Throwable: inclui falha da biblioteca de rede no aparelho, que não pode derrubar o Admin
+                br.com.jefferson.totemsga.util.Logger.getInstance().e("UPDATE", "Falha na atualização: " + e, null);
+                final String msg = friendlyUpdateError(e);
+                runOnUiThread(() -> {
+                    if (isFinishing() || !dialog.isShowing()) return;
+                    btn.setEnabled(true);
+                    btn.setText("Verificar");
+                    tvStatus.setText(msg);
+                });
+            }
+        }).start();
+    }
+
+    private String friendlyUpdateError(Throwable e) {
+        String raw = String.valueOf(e.getMessage());
+        String all = (e.getClass().getSimpleName() + " " + raw).toUpperCase();
+        if (all.contains("LOGON_FAILURE") || all.contains("ACCESS_DENIED") || all.contains("PASSWORD")
+                || all.contains("ACCOUNT")) {
+            return "Acesso negado à pasta. Confira o usuário e a senha de rede.";
+        }
+        if (all.contains("BAD_NETWORK_NAME") || all.contains("OBJECT_NAME_NOT_FOUND") || all.contains("OBJECT_PATH_NOT_FOUND")) {
+            return "Pasta não encontrada no servidor. Confira o caminho.";
+        }
+        if (all.contains("UNKNOWNHOST") || all.contains("CONNECT") || all.contains("TIMEOUT") || all.contains("UNREACHABLE")) {
+            return "O totem não conseguiu chegar ao servidor. Verifique a rede.";
+        }
+        return "Falha na atualização: " + e.getClass().getSimpleName() + " - " + raw;
+    }
+
+    private void launchInstaller(java.io.File apk) {
+        try {
+            // Em modo Kiosk (tela fixada) o Android bloqueia abrir o instalador
+            try { stopLockTask(); } catch (Exception ignored) {}
+
+            android.net.Uri uri = androidx.core.content.FileProvider.getUriForFile(
+                    this, getPackageName() + ".provider", apk);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, "application/vnd.android.package-archive");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Não foi possível abrir o instalador: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void warnDefaultAdminPass() {

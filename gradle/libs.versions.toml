@@ -14,6 +14,7 @@ flexbox = "3.0.0"
 exoplayer = "2.19.1"
 youtube-player = "12.1.0"
 sunmi-printer = "1.0.20"
+smbj = "0.13.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -31,6 +32,7 @@ flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref 
 exoplayer = { group = "com.google.android.exoplayer", name = "exoplayer", version.ref = "exoplayer" }
 youtube-player = { group = "com.pierfrancescosoffritti.androidyoutubeplayer", name = "core", version.ref = "youtube-player" }
 sunmi-printer = { group = "com.sunmi", name = "printerx", version.ref = "sunmi-printer" }
+smbj = { group = "com.hierynomus", name = "smbj", version.ref = "smbj" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

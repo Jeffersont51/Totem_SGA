@@ -10,8 +10,8 @@ android {
         applicationId = "br.com.jefferson.totemsga"
         minSdk = 25
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.1.2"
+        versionCode = 6
+        versionName = "1.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.exoplayer)
     implementation(libs.youtube.player)
     implementation(libs.sunmi.printer)
+    // Leitura da pasta de rede (SMB) para a atualizacao do app
+    implementation(libs.smbj)
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
