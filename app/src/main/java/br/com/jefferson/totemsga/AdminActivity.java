@@ -200,8 +200,10 @@ public class AdminActivity extends BaseActivity {
 
 
     private void saveSettings() {
-        int selectedUnidadeId = -1;
-        String selectedUnidadeNome = "";
+        // Se a lista de unidades não carregou (servidor fora, 401...), mantém a
+        // unidade já salva. Antes gravava -1 e o totem passava a dar 404 nos serviços.
+        int selectedUnidadeId = sessionManager.getUnidadeId();
+        String selectedUnidadeNome = sessionManager.getUnidadeNome();
         if (spinnerUnidade.getSelectedItemPosition() >= 0 && !unidadesList.isEmpty()) {
             Unidade u = unidadesList.get(spinnerUnidade.getSelectedItemPosition());
             selectedUnidadeId = u.id;

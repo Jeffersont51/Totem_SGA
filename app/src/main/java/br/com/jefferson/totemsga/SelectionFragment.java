@@ -261,6 +261,10 @@ public class SelectionFragment extends BaseKioskFragment {
     private void fetchServices() {
         ApiService api = RetrofitClient.getInstance(sessionManager);
         if (api == null) return;
+        if (sessionManager.getUnidadeId() < 0) {
+            showError("Unidade não configurada. Abra o Admin, escolha a unidade e salve.");
+            return;
+        }
         api.getServicos(sessionManager.getUnidadeId()).enqueue(new Callback<List<ServicoUnidade>>() {
             @Override
             public void onResponse(Call<List<ServicoUnidade>> call, Response<List<ServicoUnidade>> response) {

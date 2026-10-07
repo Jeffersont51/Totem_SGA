@@ -98,6 +98,10 @@ O app usa duas autenticações com o NovoSGA, e as duas se recuperam sozinhas:
 
 ## 📦 Histórico de Versões
 
+### v1.1.1 (07/10/2026)
+
+-   **Erro 404 ao carregar serviços**: salvar o Admin com a lista de unidades vazia (servidor fora ou 401) gravava a unidade como -1. Agora a unidade já salva é mantida, e a tela de serviços avisa "Unidade não configurada" em vez de mostrar 404.
+
 ### v1.1.0 (07/10/2026)
 
 Ponto de partida anterior marcado no Git como `ponto-de-partida-2026-10-07` (APK guardado em `BACKUP_V4_PONTO_DE_PARTIDA_2026-10-07/`).
