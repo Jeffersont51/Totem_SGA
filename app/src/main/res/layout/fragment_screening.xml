@@ -102,8 +102,8 @@
                     android:id="@+id/tvTimer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tempo restante: 30s"
-                    android:textColor="#FF0000"
+                    android:text="Tempo restante: 30s" android:textSize="20sp" android:textStyle="bold"
+                    android:textColor="#E31E24"
                     android:layout_gravity="end"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/poppins"/>
@@ -149,7 +149,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Selecione o tipo de documento:"
-                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:textSize="20sp"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/poppins"/>
 
@@ -161,7 +162,7 @@
                     android:gravity="center"
                     android:layout_marginBottom="16dp">
 
-                    <RadioButton
+                    <RadioButton android:textSize="20sp" android:minHeight="56dp" android:paddingEnd="12dp"
                         android:id="@+id/rbCPF"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -170,7 +171,7 @@
                         android:layout_marginEnd="16dp"
                         android:fontFamily="@font/poppins"/>
 
-                    <RadioButton
+                    <RadioButton android:textSize="20sp" android:minHeight="56dp" android:paddingEnd="12dp"
                         android:id="@+id/rbCNPJ"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -178,7 +179,7 @@
                         android:layout_marginEnd="16dp"
                         android:fontFamily="@font/poppins"/>
 
-                    <RadioButton
+                    <RadioButton android:textSize="20sp" android:minHeight="56dp" android:paddingEnd="12dp"
                         android:id="@+id/rbPhone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -200,7 +201,7 @@
                     app:boxCornerRadiusBottomStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etDocumento"
+                        android:id="@+id/etDocumento" android:textSize="22sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="number"
@@ -221,7 +222,7 @@
                     app:boxCornerRadiusBottomStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etNome"
+                        android:id="@+id/etNome" android:textSize="22sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textCapWords"
@@ -234,7 +235,7 @@
                     android:layout_height="wrap_content"
                     android:text="Encontrado no cadastro - confira e edite se necessário"
                     android:textColor="#666666"
-                    android:textSize="12sp"
+                    android:textSize="16sp"
                     android:textStyle="italic"
                     android:layout_marginBottom="16dp"
                     android:visibility="gone"

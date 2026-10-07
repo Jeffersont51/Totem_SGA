@@ -45,6 +45,47 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
     private int selectedId = -1;
     private int spanCount = 2;
     private int viewStyle = STYLE_HORIZONTAL;
+    // Altura mínima (dp) e fonte (sp) dos cards, vindas de "Ajustes dos Botões de
+    // Seleção" do Admin. 0 = usa o que está no layout.
+    private int cardMinHeightDp = 0;
+    private int nameFontSp = 0;
+
+    public void setSizing(int cardMinHeightDp, int nameFontSp) {
+        this.cardMinHeightDp = cardMinHeightDp;
+        this.nameFontSp = nameFontSp;
+        notifyDataSetChanged();
+    }
+
+    private void applySizing(ViewHolder holder) {
+        float density = holder.itemView.getResources().getDisplayMetrics().density;
+        if (cardMinHeightDp > 0 && holder.llCardBody != null) {
+            holder.llCardBody.setMinimumHeight((int) (cardMinHeightDp * density));
+        }
+        if (nameFontSp > 0) {
+            holder.tvName.setTextSize(nameFontSp);
+            if (holder.tvMessage != null) {
+                holder.tvMessage.setTextSize(Math.max(14, Math.round(nameFontSp * 0.62f)));
+            }
+        }
+        // Ícone proporcional à altura do card, para não ficar perdido num card grande
+        if (cardMinHeightDp > 0 && holder.flIconContainer != null && holder.ivIcon != null) {
+            int box = (int) (Math.max(40, Math.min(72, cardMinHeightDp * 0.42f)) * density);
+            ViewGroup.LayoutParams boxLp = holder.flIconContainer.getLayoutParams();
+            boxLp.width = box;
+            boxLp.height = box;
+            holder.flIconContainer.setLayoutParams(boxLp);
+            ViewGroup.LayoutParams iconLp = holder.ivIcon.getLayoutParams();
+            iconLp.width = box / 2;
+            iconLp.height = box / 2;
+            holder.ivIcon.setLayoutParams(iconLp);
+            if (holder.ivChevron != null) {
+                ViewGroup.LayoutParams chevLp = holder.ivChevron.getLayoutParams();
+                chevLp.width = box / 2;
+                chevLp.height = box / 2;
+                holder.ivChevron.setLayoutParams(chevLp);
+            }
+        }
+    }
 
     public GenericItemAdapter(List<?> items, String primaryColor, Map<String, String> itemColors, Map<String, String> itemTextColors, OnItemClickListener listener) {
         this(items, primaryColor, itemColors, itemTextColors, STYLE_HORIZONTAL, listener);
@@ -134,6 +175,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
             iconRes = R.drawable.ic_health_cross; // Default for priority
         }
 
+        applySizing(holder);
         holder.tvName.setText(name);
         if (holder.tvMessage != null) {
             if (message != null && !message.isEmpty()) {
@@ -171,7 +213,8 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
         }
 
         try {
-            int color = Color.parseColor(itemColor);
+            // Cor de tema parecida com o branco do card deixava o ícone invisível
+            int color = br.com.jefferson.totemsga.util.ColorGuard.visibleOn(Color.parseColor(itemColor), Color.WHITE);
             
             if (viewStyle == STYLE_HORIZONTAL) {
                 // Neutral background with color accents
@@ -192,7 +235,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
                 holder.tvName.setTextColor(Color.parseColor("#333333"));
                 if (holder.ivChevron != null) {
                     holder.ivChevron.setVisibility(showChevron ? View.VISIBLE : View.GONE);
-                    holder.ivChevron.setImageTintList(ColorStateList.valueOf(Color.parseColor("#CCCCCC")));
+                    holder.ivChevron.setImageTintList(ColorStateList.valueOf(Color.parseColor("#999999")));
                 }
             } else {
                 // White background, tinted icon (Grid style)
@@ -202,7 +245,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
                 
                 // Solid Light tint background for icon container
                 // We'll calculate a light version of the color without alpha on the view
-                int lightColor = Color.argb(40, Color.red(color), Color.green(color), Color.blue(color));
+                int lightColor = Color.argb(48, Color.red(color), Color.green(color), Color.blue(color));
                 holder.flIconContainer.setBackgroundTintList(ColorStateList.valueOf(lightColor));
                 holder.flIconContainer.setAlpha(1.0f); // Solid view
                 
@@ -314,7 +357,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
         com.google.android.material.card.MaterialCardView cardView, cardAgendamento;
         ImageView ivIcon, ivChevron;
         FrameLayout flIconContainer;
-        View vAccentBar;
+        View vAccentBar, llCardBody;
         com.google.android.material.button.MaterialButton btnCardReprint;
 
         public ViewHolder(@NonNull View itemView) {
@@ -326,6 +369,7 @@ public class GenericItemAdapter extends RecyclerView.Adapter<GenericItemAdapter.
             ivChevron = itemView.findViewById(R.id.ivChevron);
             flIconContainer = itemView.findViewById(R.id.flIconContainer);
             vAccentBar = itemView.findViewById(R.id.vAccentBar);
+            llCardBody = itemView.findViewById(R.id.llCardBody);
 
             // Scheduling specific fields
             cardAgendamento = itemView.findViewById(R.id.cardAgendamento);

@@ -10,8 +10,8 @@ android {
         applicationId = "br.com.jefferson.totemsga"
         minSdk = 25
         targetSdk = 34
-        versionCode = 8
-        versionName = "1.1.6"
+        versionCode = 9
+        versionName = "1.1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

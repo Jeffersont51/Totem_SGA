@@ -327,6 +327,7 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
                 android.view.ViewGroup.LayoutParams lpSearch = btnSearchButton.getLayoutParams();
                 lpSearch.height = (int) (sessionManager.getButtonHeight() * getResources().getDisplayMetrics().density);
                 btnSearchButton.setLayoutParams(lpSearch);
+                sizePrimaryButtonText(btnSearchButton);
             }
 
             // Dynamic back button positioning

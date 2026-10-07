@@ -266,6 +266,7 @@ public class ScreeningFragment extends BaseKioskFragment {
             android.view.ViewGroup.LayoutParams lpGerar = btnGerarSenha.getLayoutParams();
             lpGerar.height = (int) (sessionManager.getButtonHeight() * getResources().getDisplayMetrics().density);
             btnGerarSenha.setLayoutParams(lpGerar);
+            sizePrimaryButtonText(btnGerarSenha);
             
             Button btnBackSecondary = view.findViewById(R.id.btnBackScreeningSecondary);
             android.view.View scrollView = view.findViewById(R.id.svScreening);

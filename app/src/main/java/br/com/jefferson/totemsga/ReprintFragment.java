@@ -653,6 +653,7 @@ public class ReprintFragment extends BaseKioskFragment {
             android.view.ViewGroup.LayoutParams lpSearch = btnSearch.getLayoutParams();
             lpSearch.height = (int) (sessionManager.getButtonHeight() * getResources().getDisplayMetrics().density);
             btnSearch.setLayoutParams(lpSearch);
+            sizePrimaryButtonText(btnSearch);
 
             setupBackButton(btnBack, view.findViewById(R.id.svReprint));
         } catch (Exception e) {}

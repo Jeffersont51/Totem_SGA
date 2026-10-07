@@ -227,6 +227,15 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <ProgressBar
+            android:id="@+id/progressLoading"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="48dp"
+            android:indeterminateTint="#F47B20"
+            android:visibility="gone"/>
+
         <LinearLayout
             android:id="@+id/llError"
             android:layout_width="match_parent"
@@ -241,15 +250,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Falha ao carregar dados"
-                android:textSize="20sp"
-                android:layout_marginBottom="16dp"/>
+                android:textSize="24sp"
+                android:gravity="center"
+                android:fontFamily="@font/poppins"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRetry"
+                style="@style/Widget.Totem.Button.Primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TENTAR NOVAMENTE"
-                android:padding="16dp"/>
+                android:minHeight="72dp"
+                android:paddingStart="48dp"
+                android:paddingEnd="48dp"
+                android:textSize="22sp"
+                android:text="TENTAR NOVAMENTE"/>
         </LinearLayout>
 
         <!-- Secondary Back Button at Bottom -->

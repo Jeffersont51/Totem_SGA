@@ -106,6 +106,7 @@ public class SuccessFragment extends BaseKioskFragment {
             android.view.ViewGroup.LayoutParams lpBackToStart = btnBackToStart.getLayoutParams();
             lpBackToStart.height = (int) (sessionManager.getButtonHeight() * getResources().getDisplayMetrics().density);
             btnBackToStart.setLayoutParams(lpBackToStart);
+            sizePrimaryButtonText(btnBackToStart);
 
             int textColorVal = android.graphics.Color.parseColor(sessionManager.getBackgroundTextColor());
             TextView tvTitle = view.findViewById(R.id.tvSuccessTitle);

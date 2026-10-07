@@ -225,8 +225,10 @@ public class LayoutConfigActivity extends BaseActivity {
 
         try {
             Button btnNextPreview = findViewById(R.id.btnNext);
-            int bColor = Color.parseColor(btnColor);
-            int bTextColor = Color.parseColor(btnTextColor);
+            // Mesma proteção de contraste do app: a prévia mostra o que o cliente vai ver
+            int pageBg = br.com.jefferson.totemsga.util.ColorGuard.parse(sessionManager.getBackgroundColor(), Color.WHITE);
+            int bColor = br.com.jefferson.totemsga.util.ColorGuard.visibleOn(Color.parseColor(btnColor), pageBg);
+            int bTextColor = br.com.jefferson.totemsga.util.ColorGuard.readableOn(Color.parseColor(btnTextColor), bColor);
             btnNextPreview.setBackgroundTintList(android.content.res.ColorStateList.valueOf(bColor));
             btnNextPreview.setTextColor(bTextColor);
             

@@ -1,6 +1,6 @@
 # Totem SGA - Documentação
 
-**Versão atual:** 1.1.6 (7 de outubro de 2026)
+**Versão atual:** 1.1.7 (7 de outubro de 2026)
 
 O **Totem SGA** é um aplicativo Android para terminais de autoatendimento. O cliente escolhe o atendimento na tela, o app gera a senha no **NovoSGA** (sistema de filas) e imprime o comprovante na impressora térmica do próprio totem.
 
@@ -58,7 +58,7 @@ A senha de fábrica é `admin`. **Troque no primeiro acesso**; enquanto ela não
 | Nova Senha Admin | Troca a senha de acesso ao Admin. |
 | Ativar Modo Kiosk | Trava o aparelho no aplicativo. |
 | Ativar Administrador do Dispositivo | Permissão do Android para o Kiosk funcionar sem avisos. |
-| Configuração de Layout | Cores, logotipo, tamanho dos botões, número de colunas. |
+| Configuração de Layout | Cores, logotipo, tamanho dos botões, número de colunas. Em **Ajustes dos Botões de Seleção**, a altura vale para os cards de departamento e serviço e para os botões laranja; o tamanho da fonte vale para o nome nos cards e para o texto dos botões laranja. |
 | Configuração Layout de Impressão | Tamanho das letras, alinhamento e o que aparece no comprovante. |
 | Configuração de Publicidade | Vídeos e imagens exibidos com o totem parado. |
 | Configuração Inicial Servidor | Reabre a tela de URL, Client ID, usuário e senha. |
@@ -128,10 +128,11 @@ Observações:
 
 | O que aparece | Causa provável | O que fazer |
 |---|---|---|
-| "Falha ao carregar departamentos (401)" | O servidor recusou a autenticação. O app tenta de novo sozinho a cada 30 segundos e refaz o login. | Se persistir por mais de um minuto, confira usuário, senha e Client ID/Secret em **Configuração Inicial Servidor** e salve. |
+| "Totem temporariamente indisponível. Procure um atendente." | O totem não conseguiu carregar departamentos ou serviços: servidor fora, rede fora ou autenticação recusada. O app tenta de novo sozinho a cada 30 segundos. O motivo exato (por exemplo "HTTP 401") fica no **Diagnóstico**. | Se persistir por mais de um minuto, verificar a rede e o servidor; se o Diagnóstico mostrar 401, conferir usuário, senha e Client ID/Secret em **Configuração Inicial Servidor** e salvar. |
 | "Unidade não configurada" | Nenhuma unidade salva no Admin. | Abrir o Admin, escolher a Unidade e salvar. |
-| "Falha ao carregar serviços (404)" | A unidade salva não existe mais no NovoSGA. | Escolher a unidade de novo no Admin. |
-| "Erro de conexão" | O totem não alcança o servidor. | Verificar o Wi-Fi e o servidor. O app religa o Wi-Fi sozinho após cerca de 2 minutos sem rede. |
+| Indisponível só ao abrir um departamento, com "HTTP 404" no Diagnóstico | A unidade salva não existe mais no NovoSGA. | Escolher a unidade de novo no Admin. |
+| Sem rede | O totem não alcança o servidor. | Verificar o Wi-Fi e o servidor. O app religa o Wi-Fi sozinho após cerca de 2 minutos sem rede. |
+| Botão ou ícone com cor diferente da escolhida no Admin | Proteção de contraste: a cor de tema escolhida era parecida demais com a cor de fundo, e o app trocou pelo laranja da marca para o elemento não sumir. | Escolher uma cor de tema que se destaque do fundo. |
 | Departamento ou serviço não aparece | Falta `VISIVEL` na Descrição, ou o item está inativo. | Corrigir no NovoSGA. |
 | Botão de reimpressão não aparece | Nenhum serviço tem `SEGUNDAVIA`. | Acrescentar na Descrição do serviço. |
 | "Impressora indisponível" | Sem papel, tampa aberta ou travada. | Ver seção 6. |
@@ -233,6 +234,14 @@ Estados da biblioteca (`StatusImpressora`) e como o app trata:
 
 `getPostPrintProblem()` é chamado 3,5 segundos depois de imprimir. Se a impressora estiver em qualquer estado de erro, a tela mostra o aviso e o nome do estado é gravado no `Logger`.
 
+## 13.1 Aparência e cores
+
+- **Tema:** `Theme.TOTEMSGA` (em `res/values/themes.xml`) define o laranja da marca como cor primária, no lugar do roxo padrão do Material.
+- **Tamanho dos cards:** `GenericItemAdapter.setSizing()` recebe a altura e a fonte de "Ajustes dos Botões de Seleção". O ícone acompanha a altura do card.
+- **Texto dos botões principais:** `BaseKioskFragment.sizePrimaryButtonText()`.
+- **Proteção de contraste:** `util/ColorGuard.java`. `visibleOn()` troca a cor de um botão ou ícone pelo laranja da marca se o contraste com o fundo for menor que 1,3; `readableOn()` troca a cor de um texto por branco ou cinza-escuro se o contraste for menor que 2,0. Os limites foram escolhidos para manter as combinações da marca (branco sobre laranja = 2,7; amarelo sobre branco = 1,5) e barrar tons claros sobre o fundo (cerca de 1,2). **Ao aplicar uma cor configurável a um elemento, passe-a por `ColorGuard`.**
+- **Mensagem de erro ao cliente:** a tela de seleção mostra sempre o mesmo texto e grava o detalhe técnico no `Logger` (`SelectionFragment.showUnavailable()`).
+
 ## 14. Atualização pela pasta de rede
 
 `util/AppUpdater.java`:
@@ -283,6 +292,18 @@ Se a compilação falhar com erro de `ANDROID_PREFS_ROOT`, remova essa variável
 - **Campo Unidade do Admin** mostra o primeiro item da lista quando não há unidade salva, dando a impressão de que já está configurado.
 
 ## 18. Histórico de versões
+
+### v1.1.7 (07/10/2026) - aguardando teste no totem
+
+Revisão de aparência para uso em totem. Ponto de retorno: marca `ponto-de-retorno-v1.1.6`.
+
+- Cards de departamento e serviço obedecem à altura e à fonte do Admin (antes eram fixos e pequenos); ícone proporcional; mensagem do serviço em até duas linhas.
+- Texto dos botões laranja obedece à fonte do Admin.
+- Proteção de contraste: botões, ícones e títulos não somem mais quando a cor de tema é parecida com o fundo ("Tentar novamente", "Salvar e Sair", "Próximo", título do Admin, ícones dos serviços).
+- Laranja da marca no lugar do roxo nas opções, chaves e botões de contorno.
+- "Tempo restante", opções de documento e campos de digitação maiores.
+- Indicador de carregamento na tela de seleção.
+- Mensagem de erro em linguagem de cliente; o código técnico vai para o Diagnóstico.
 
 ### v1.1.6 (07/10/2026) - aguardando teste no totem
 

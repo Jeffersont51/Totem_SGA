@@ -47,7 +47,7 @@ public class SelectionFragment extends BaseKioskFragment {
     private String themeColor;
     private RecyclerView recyclerView;
     private TextView tvTitle;
-    private View llError, cardScheduling, cardReprint;
+    private View llError, cardScheduling, cardReprint, progressLoading;
     private TextView tvErrorMessage;
     private Button btnRetry;
     private final Gson gson = new Gson();
@@ -96,6 +96,7 @@ public class SelectionFragment extends BaseKioskFragment {
         recyclerView = view.findViewById(R.id.rvItems);
         tvTitle = view.findViewById(R.id.tvSelectionTitle);
         llError = view.findViewById(R.id.llError);
+        progressLoading = view.findViewById(R.id.progressLoading);
         tvErrorMessage = view.findViewById(R.id.tvErrorMessage);
         btnRetry = view.findViewById(R.id.btnRetry);
         cardScheduling = view.findViewById(R.id.cardScheduling);
@@ -227,12 +228,31 @@ public class SelectionFragment extends BaseKioskFragment {
         if (isAdded() && llError != null && llError.getVisibility() == View.VISIBLE) reload();
     };
 
+    // Mensagem única para o cliente; o detalhe técnico vai para o Diagnóstico
+    private static final String MSG_UNAVAILABLE = "Totem temporariamente indisponível.\nProcure um atendente.";
+
+    private void showLoading(boolean loading) {
+        if (progressLoading == null) return;
+        // Só mostra o indicador se a lista ainda está vazia (primeira carga)
+        boolean empty = recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0;
+        boolean errorVisible = llError != null && llError.getVisibility() == View.VISIBLE;
+        progressLoading.setVisibility(loading && empty && !errorVisible ? View.VISIBLE : View.GONE);
+    }
+
+    private void showUnavailable(String technicalDetail) {
+        br.com.jefferson.totemsga.util.Logger.getInstance().e("SELECAO", technicalDetail);
+        showError(MSG_UNAVAILABLE);
+    }
+
     private void fetchDepartments() {
         ApiService api = RetrofitClient.getInstance(sessionManager);
         if (api == null) return;
+        showLoading(true);
         api.getDepartamentos().enqueue(new Callback<List<Departamento>>() {
             @Override
             public void onResponse(Call<List<Departamento>> call, Response<List<Departamento>> response) {
+                if (!isAdded()) return;
+                showLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     hideError();
                     List<Departamento> filtered = new ArrayList<>();
@@ -249,11 +269,13 @@ public class SelectionFragment extends BaseKioskFragment {
                     Collections.sort(filtered, (o1, o2) -> o1.nome.compareToIgnoreCase(o2.nome));
                     setAdapter(filtered);
                 } else {
-                    showError("Falha ao carregar departamentos (" + response.code() + ")");
+                    showUnavailable("Falha ao carregar departamentos (HTTP " + response.code() + ")");
                 }
             }
             @Override public void onFailure(Call<List<Departamento>> call, Throwable t) {
-                showError("Erro de conexão: " + t.getMessage());
+                if (!isAdded()) return;
+                showLoading(false);
+                showUnavailable("Erro de conexão ao carregar departamentos: " + t.getMessage());
             }
         });
     }
@@ -265,9 +287,12 @@ public class SelectionFragment extends BaseKioskFragment {
             showError("Unidade não configurada. Abra o Admin, escolha a unidade e salve.");
             return;
         }
+        showLoading(true);
         api.getServicos(sessionManager.getUnidadeId()).enqueue(new Callback<List<ServicoUnidade>>() {
             @Override
             public void onResponse(Call<List<ServicoUnidade>> call, Response<List<ServicoUnidade>> response) {
+                if (!isAdded()) return;
+                showLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     hideError();
                     List<ServicoUnidade> filtered = new ArrayList<>();
@@ -286,11 +311,13 @@ public class SelectionFragment extends BaseKioskFragment {
                     Collections.sort(filtered, (o1, o2) -> o1.servico.nome.compareToIgnoreCase(o2.servico.nome));
                     setAdapter(filtered);
                 } else {
-                    showError("Falha ao carregar serviços (" + response.code() + ")");
+                    showUnavailable("Falha ao carregar serviços (HTTP " + response.code() + ")");
                 }
             }
             @Override public void onFailure(Call<List<ServicoUnidade>> call, Throwable t) {
-                showError("Erro de conexão: " + t.getMessage());
+                if (!isAdded()) return;
+                showLoading(false);
+                showUnavailable("Erro de conexão ao carregar serviços: " + t.getMessage());
             }
         });
     }
@@ -301,12 +328,19 @@ public class SelectionFragment extends BaseKioskFragment {
         llError.setVisibility(View.VISIBLE);
         tvErrorMessage.setText(message);
 
+        if (progressLoading != null) progressLoading.setVisibility(View.GONE);
+
         try {
-            int bColor = android.graphics.Color.parseColor(sessionManager.getButtonColor());
-            int tColor = android.graphics.Color.parseColor(sessionManager.getButtonTextColor());
+            // Proteção de contraste: com a cor de tema parecida com o fundo, o botão sumia
+            int background = br.com.jefferson.totemsga.util.ColorGuard.parse(sessionManager.getBackgroundColor(), android.graphics.Color.WHITE);
+            int bColor = br.com.jefferson.totemsga.util.ColorGuard.visibleOn(
+                    android.graphics.Color.parseColor(sessionManager.getButtonColor()), background);
+            int tColor = br.com.jefferson.totemsga.util.ColorGuard.readableOn(
+                    android.graphics.Color.parseColor(sessionManager.getButtonTextColor()), bColor);
             btnRetry.setBackgroundTintList(android.content.res.ColorStateList.valueOf(bColor));
             btnRetry.setTextColor(tColor);
-            tvErrorMessage.setTextColor(android.graphics.Color.parseColor(sessionManager.getBackgroundTextColor()));
+            tvErrorMessage.setTextColor(br.com.jefferson.totemsga.util.ColorGuard.readableOn(
+                    android.graphics.Color.parseColor(sessionManager.getBackgroundTextColor()), background));
         } catch (Exception e) {}
 
         // Tenta de novo sozinho: o totem não pode ficar parado na tela de erro
@@ -432,6 +466,7 @@ public class SelectionFragment extends BaseKioskFragment {
             }
         });
         adapter.setSpanCount(spanCount);
+        adapter.setSizing(sessionManager.getButtonHeight(), sessionManager.getButtonFontSize());
         recyclerView.setAdapter(adapter);
     }
 

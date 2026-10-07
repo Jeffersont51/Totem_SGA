@@ -1,8 +1,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.TOTEMSGA" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Laranja da marca no lugar do roxo padrao do Material (opcoes, chaves, botoes de contorno, campos) -->
+        <item name="colorPrimary">#F47B20</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#FFE0C7</item>
+        <item name="colorOnPrimaryContainer">#5A2A00</item>
+        <item name="colorSecondary">#F47B20</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#FFE0C7</item>
+        <item name="colorOnSecondaryContainer">#5A2A00</item>
+        <item name="colorTertiary">#E31E24</item>
     </style>
 
     <style name="Theme.TOTEMSGA" parent="Base.Theme.TOTEMSGA" />

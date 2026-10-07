@@ -217,6 +217,14 @@ public abstract class BaseKioskFragment extends Fragment {
         }, 8000);
     }
 
+    // Botões principais (laranja) usam a fonte de "Ajustes dos Botões de Seleção".
+    // Antes só a altura era aplicada: botão enorme com letra pequena.
+    protected void sizePrimaryButtonText(android.widget.Button btn) {
+        if (btn == null) return;
+        int fontSp = sessionManager.getButtonFontSize();
+        if (fontSp > 0) btn.setTextSize(fontSp);
+    }
+
     /** Toast que não derruba o app se a tela já tiver sido fechada. */
     protected void safeToast(String message) {
         android.content.Context ctx = getContext();

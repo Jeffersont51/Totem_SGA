@@ -52,11 +52,15 @@ public abstract class BaseActivity extends AppCompatActivity {
             Toolbar toolbar = findViewById(R.id.toolbar);
             if (toolbar != null) {
                 toolbar.setBackgroundColor(color);
-                toolbar.setTitleTextColor(Color.WHITE);
+                // Título e seta legíveis mesmo com cor de tema clara
+                int onToolbar = br.com.jefferson.totemsga.util.ColorGuard.readableOn(Color.WHITE, color);
+                toolbar.setTitleTextColor(onToolbar);
                 setSupportActionBar(toolbar);
+                if (toolbar.getNavigationIcon() != null) toolbar.getNavigationIcon().setTint(onToolbar);
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     toolbar.setNavigationOnClickListener(v -> onBackPressed());
+                    if (toolbar.getNavigationIcon() != null) toolbar.getNavigationIcon().setTint(onToolbar);
                 }
             }
 
@@ -74,10 +78,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void styleButtons(Button... buttons) {
         try {
-            String colorHex = sessionManager.getPrimaryColor();
-            int color = Color.parseColor(colorHex);
-            String textColorHex = sessionManager.getButtonTextColor();
-            int textColor = Color.parseColor(textColorHex);
+            // Proteção de contraste: cor de tema parecida com o fundo fazia o botão sumir
+            int background = br.com.jefferson.totemsga.util.ColorGuard.parse(sessionManager.getBackgroundColor(), Color.WHITE);
+            int color = br.com.jefferson.totemsga.util.ColorGuard.visibleOn(
+                    Color.parseColor(sessionManager.getPrimaryColor()), background);
+            int textColor = br.com.jefferson.totemsga.util.ColorGuard.readableOn(
+                    Color.parseColor(sessionManager.getButtonTextColor()), color);
             ColorStateList csl = ColorStateList.valueOf(color);
 
             for (Button btn : buttons) {
