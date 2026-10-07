@@ -104,6 +104,7 @@ public class AdminActivity extends BaseActivity {
 
         showVersion();
         warnDefaultAdminPass();
+        sessionManager.clearSavedUpdateCredentials();
     }
 
     // Mostra a versão instalada no botão de Diagnóstico, para saber qual APK está em cada totem
@@ -133,14 +134,14 @@ public class AdminActivity extends BaseActivity {
         final EditText etUser = new EditText(this);
         etUser.setHint("Usuário de rede (ex: ALVORADA\\usuario)");
         etUser.setSingleLine(true);
-        etUser.setText(sessionManager.getUpdateUser());
+
         box.addView(etUser);
 
         final EditText etPass = new EditText(this);
         etPass.setHint("Senha de rede");
         etPass.setSingleLine(true);
         etPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        etPass.setText(sessionManager.getUpdatePass());
+
         box.addView(etPass);
 
         final android.widget.TextView tvStatus = new android.widget.TextView(this);
@@ -161,7 +162,7 @@ public class AdminActivity extends BaseActivity {
                 String path = etPath.getText().toString().trim();
                 String user = etUser.getText().toString().trim();
                 String pass = etPass.getText().toString();
-                sessionManager.saveUpdateSource(path, user, pass);
+                sessionManager.saveUpdatePath(path);
                 runUpdate(dialog, btn, tvStatus, path, user, pass);
             });
         });

@@ -253,13 +253,18 @@ public class SessionManager {
     // Atualização do app pela pasta de rede
     public static final String DEFAULT_UPDATE_PATH = "\\\\192.168.1.227\\Programas TI\\TOTEM_SGA";
     public String getUpdatePath() { return pref.getString("update_path", DEFAULT_UPDATE_PATH); }
-    public String getUpdateUser() { return pref.getString("update_user", ""); }
-    public String getUpdatePass() { return pref.getString("update_pass", ""); }
-    public void saveUpdateSource(String path, String user, String pass) {
+    // Usuário e senha de rede NÃO são guardados: o técnico digita o próprio
+    // acesso a cada atualização. O remove apaga o que versões anteriores salvaram.
+    public void saveUpdatePath(String path) {
         editor.putString("update_path", path);
-        editor.putString("update_user", user);
-        editor.putString("update_pass", pass);
+        editor.remove("update_user");
+        editor.remove("update_pass");
         editor.apply();
+    }
+    public void clearSavedUpdateCredentials() {
+        if (pref.contains("update_user") || pref.contains("update_pass")) {
+            editor.remove("update_user").remove("update_pass").apply();
+        }
     }
 
     public void setLogoUrl(String url) { editor.putString(KEY_LOGO_URL, url).apply(); }

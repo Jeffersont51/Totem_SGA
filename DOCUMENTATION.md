@@ -98,9 +98,14 @@ O app usa duas autenticações com o NovoSGA, e as duas se recuperam sozinhas:
 
 ## 📦 Histórico de Versões
 
+### v1.1.5 (07/10/2026)
+
+-   **Atualizador não guarda mais usuário e senha de rede** (decisão do Jefferson): o técnico de TI digita o próprio acesso a cada atualização. Ao abrir o Admin, o app apaga as credenciais que as versões 1.1.3/1.1.4 tinham salvado. Só o caminho da pasta fica gravado.
+-   Testado no totem em 07/10/2026 e aprovado: bloqueio de emissão sem papel/tampa aberta, toque duplo, agendamento, reimpressão e atualização pela pasta de rede. Pendente: confirmar a correção do erro 401 deixando o totem ligado de um dia para o outro.
+
 ### v1.1.3 e v1.1.4 (07/10/2026)
 
--   **Atualização pela pasta de rede**: botão "Atualizar aplicativo" no Admin. Lê uma pasta compartilhada do Windows (padrão `\\192.168.1.227\Programas TI\TOTEM_SGA`), escolhe o APK de maior versão **pelo nome do arquivo** (`TOTEM_SGA_v1.2.3.apk`), baixa, confere (mesmo pacote, mesma assinatura, versão não menor) e abre o instalador do Android. Usuário e senha de rede são digitados no próprio totem e ficam salvos nas preferências. Código em `util/AppUpdater.java` (biblioteca `smbj`).
+-   **Atualização pela pasta de rede**: botão "Atualizar aplicativo" no Admin. Lê uma pasta compartilhada do Windows (padrão `\\192.168.1.227\Programas TI\TOTEM_SGA`), escolhe o APK de maior versão **pelo nome do arquivo** (`TOTEM_SGA_v1.2.3.apk`), baixa, confere (mesmo pacote, mesma assinatura, versão não menor) e abre o instalador do Android. Usuário e senha de rede são digitados no próprio totem (a partir da v1.1.5 não ficam salvos). Código em `util/AppUpdater.java` (biblioteca `smbj`).
 -   A v1.1.4 é idêntica à v1.1.3, só com o número de versão maior, publicada na pasta de rede para testar a atualização.
 -   **Para publicar uma versão nova**: copiar o APK para a pasta de rede com a versão no nome. O `versionName` do `build.gradle.kts` e o nome do arquivo precisam ser iguais.
 
