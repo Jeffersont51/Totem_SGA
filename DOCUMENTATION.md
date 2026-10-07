@@ -98,6 +98,10 @@ O app usa duas autenticações com o NovoSGA, e as duas se recuperam sozinhas:
 
 ## 📦 Histórico de Versões
 
+### v1.1.6 (07/10/2026)
+
+-   **Papel preso na impressora**: o estado `ERRO_GUILHOTINA` passa a bloquear a emissão, como sem papel e tampa aberta. Além disso, 3,5 segundos depois de mandar imprimir o app confere a impressora de novo e, se ela estiver em qualquer estado de erro, mostra aviso em vermelho na tela da senha (`SunmiPrinterHelper.getPostPrintProblem()`) e registra o nome do estado no Diagnóstico. **Não confirmado** qual estado a impressora informa quando o papel engasga; a biblioteca IT4R não tem um estado específico de "papel preso".
+
 ### v1.1.5 (07/10/2026)
 
 -   **Atualizador não guarda mais usuário e senha de rede** (decisão do Jefferson): o técnico de TI digita o próprio acesso a cada atualização. Ao abrir o Admin, o app apaga as credenciais que as versões 1.1.3/1.1.4 tinham salvado. Só o caminho da pasta fica gravado.

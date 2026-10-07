@@ -419,6 +419,14 @@ public class ReprintFragment extends BaseKioskFragment {
             printSunmi(senha);
             String problem = SunmiPrinterHelper.getInstance().getProblemMessage();
             if (problem != null) showError(problem);
+            // Papel preso so aparece durante a impressao: confere de novo em seguida
+            View root = getView();
+            if (root != null) {
+                root.postDelayed(() -> {
+                    String later = SunmiPrinterHelper.getInstance().getPostPrintProblem();
+                    if (later != null && isAdded()) showError(later);
+                }, 3500);
+            }
             return;
         }
 

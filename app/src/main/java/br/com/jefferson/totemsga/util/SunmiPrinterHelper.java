@@ -167,7 +167,7 @@ public class SunmiPrinterHelper {
         if ("AUTO".equals(printerType) && isConnected()) {
             int status = getStatus();
             if (status == 1) return ROUTE_NATIVE;
-            if (status == 4 || status == 6) return ROUTE_BLOCKED;
+            if (status == 4 || status == 6 || status == 7) return ROUTE_BLOCKED;
         }
         return ROUTE_OTHER;
     }
@@ -177,7 +177,24 @@ public class SunmiPrinterHelper {
         int status = getStatus();
         if (status == 4) return "Impressora sem papel. Anote sua senha e avise um atendente.";
         if (status == 6) return "Impressora com a tampa aberta. Anote sua senha e avise um atendente.";
+        if (status == 7) return "Impressora travada (papel preso). Anote sua senha e avise um atendente.";
         return null;
+    }
+
+    // Conferencia feita alguns segundos DEPOIS de mandar imprimir: papel preso
+    // so aparece durante a impressao. Estados conhecidos tem mensagem propria;
+    // qualquer outro estado de erro vira um aviso generico (so aviso, nao
+    // bloqueia nada). Devolve null se a impressora estiver normal.
+    public String getPostPrintProblem() {
+        if (tecToy == null) return null;
+        String name = getStatusName();
+        if ("OK".equals(name) || "PREPARANDO_IMPRESSORA".equals(name) || "GUILHOTINA_RESTAURADA".equals(name)) {
+            return null;
+        }
+        Logger.getInstance().e(TAG, "Impressora em estado " + name + " logo apos imprimir.");
+        String known = getProblemMessage();
+        if (known != null) return known;
+        return "A impressão pode não ter saído. Se o papel não saiu, anote sua senha e avise um atendente.";
     }
 
     // Motivo para NAO emitir senha agora, ou null se pode emitir. So bloqueia
@@ -191,6 +208,7 @@ public class SunmiPrinterHelper {
         int status = getStatus();
         if (status == 4) return "Impressora sem papel.\nAvise um atendente.";
         if (status == 6) return "Impressora com a tampa aberta.\nAvise um atendente.";
+        if (status == 7) return "Impressora travada (papel preso).\nAvise um atendente.";
         return null;
     }
 
@@ -211,6 +229,8 @@ public class SunmiPrinterHelper {
             if (s == StatusImpressora.OK) return 1;
             if (s == StatusImpressora.SEM_PAPEL) return 4;
             if (s == StatusImpressora.TAMPA_ABERTA) return 6;
+            // Guilhotina travada: e como a impressora informa papel preso no corte
+            if (s == StatusImpressora.ERRO_GUILHOTINA) return 7;
             return 0;
         } catch (Exception e) {
             return -1;

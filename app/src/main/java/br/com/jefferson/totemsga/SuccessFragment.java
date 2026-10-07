@@ -148,6 +148,11 @@ public class SuccessFragment extends BaseKioskFragment {
         if (sunmiRoute == SunmiPrinterHelper.ROUTE_NATIVE) {
             printSunmiTicket();
             showPrinterProblem(SunmiPrinterHelper.getInstance().getProblemMessage());
+            // Papel preso so aparece durante a impressao: confere de novo em seguida
+            View root = getView();
+            if (root != null) {
+                root.postDelayed(() -> showPrinterProblem(SunmiPrinterHelper.getInstance().getPostPrintProblem()), 3500);
+            }
             return;
         }
         
