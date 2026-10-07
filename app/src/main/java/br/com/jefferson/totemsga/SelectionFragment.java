@@ -444,6 +444,13 @@ public class SelectionFragment extends BaseKioskFragment {
     }
 
     private void handleServiceSelection(ServicoUnidade servico) {
+        // Sem papel / tampa aberta: nem começa o atendimento
+        String printerBlock = printerBlockMessage();
+        if (printerBlock != null) {
+            showPrinterBlockedDialog(printerBlock);
+            return;
+        }
+
         // Resolve features using inheritance: Service > Department > Default (false)
         boolean hasFacial = resolveFeature(servico, FeatureParser.FACIAL);
         boolean hasTriagem = resolveFeature(servico, FeatureParser.TRIAGEM);

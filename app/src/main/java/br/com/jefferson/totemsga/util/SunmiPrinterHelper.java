@@ -180,6 +180,20 @@ public class SunmiPrinterHelper {
         return null;
     }
 
+    // Motivo para NAO emitir senha agora, ou null se pode emitir. So bloqueia
+    // quando a Sunmi e a impressora em uso e informa claramente sem papel ou
+    // tampa aberta; estado indefinido nao bloqueia (evita parar o totem por
+    // alarme falso).
+    public String getBlockingMessage(String printerType) {
+        if (!isConnected()) return null;
+        boolean sunmiInUse = "SUNMI".equals(printerType) || "AUTO".equals(printerType);
+        if (!sunmiInUse) return null;
+        int status = getStatus();
+        if (status == 4) return "Impressora sem papel.\nAvise um atendente.";
+        if (status == 6) return "Impressora com a tampa aberta.\nAvise um atendente.";
+        return null;
+    }
+
     public String getStatusName() {
         if (tecToy == null) return "DESCONECTADO";
         try {

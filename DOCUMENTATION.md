@@ -98,6 +98,10 @@ O app usa duas autenticações com o NovoSGA, e as duas se recuperam sozinhas:
 
 ## 📦 Histórico de Versões
 
+### v1.1.2 (07/10/2026)
+
+-   **Impressora sem papel ou com a tampa aberta bloqueia a emissão** (decisão do Jefferson): com a impressão ligada, o app não gera senha nem confirma agendamento nesses dois estados, e mostra "Impressora indisponível, avise um atendente". Estado indefinido da impressora não bloqueia. Verificação em `BaseKioskFragment.printerBlockMessage()`.
+
 ### v1.1.1 (07/10/2026)
 
 -   **Erro 404 ao carregar serviços**: salvar o Admin com a lista de unidades vazia (servidor fora ou 401) gravava a unidade como -1. Agora a unidade já salva é mantida, e a tela de serviços avisa "Unidade não configurada" em vez de mostrar 404.

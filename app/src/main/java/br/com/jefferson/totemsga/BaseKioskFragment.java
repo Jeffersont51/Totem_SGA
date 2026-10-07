@@ -193,6 +193,30 @@ public abstract class BaseKioskFragment extends Fragment {
         });
     }
 
+    // Com a impressao ligada, nao se emite senha se a impressora estiver sem
+    // papel ou com a tampa aberta (evita senha na fila sem comprovante).
+    // Devolve a mensagem do bloqueio, ou null se pode emitir.
+    protected String printerBlockMessage() {
+        if (!sessionManager.isEnablePrint()) return null;
+        return br.com.jefferson.totemsga.util.SunmiPrinterHelper.getInstance()
+                .getBlockingMessage(sessionManager.getPrinterType());
+    }
+
+    // Aviso em destaque de impressora indisponivel; fecha sozinho apos alguns segundos.
+    protected void showPrinterBlockedDialog(String message) {
+        android.content.Context ctx = getContext();
+        if (ctx == null || !isAdded()) return;
+        final androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(ctx)
+                .setTitle("Impressora indisponível")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .create();
+        dialog.show();
+        inactivityHandler.postDelayed(() -> {
+            try { if (dialog.isShowing()) dialog.dismiss(); } catch (Exception e) {}
+        }, 8000);
+    }
+
     /** Toast que não derruba o app se a tela já tiver sido fechada. */
     protected void safeToast(String message) {
         android.content.Context ctx = getContext();

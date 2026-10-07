@@ -551,6 +551,14 @@ public class ConfirmSchedulingFragment extends BaseKioskFragment {
 
     private void confirmAgendamento() {
         if (selectedAgendamento == null) return;
+
+        // Confirmar presença também gera senha: não confirma sem impressora
+        String printerBlock = printerBlockMessage();
+        if (printerBlock != null) {
+            showError("Impressora", printerBlock.replace("\n", " "));
+            return;
+        }
+
         // Trava contra toque duplo no botão de confirmar do card
         if (isConfirming) return;
         isConfirming = true;

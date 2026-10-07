@@ -504,6 +504,13 @@ public class ScreeningFragment extends BaseKioskFragment {
             }
         }
 
+        // A impressora pode ter ficado sem papel enquanto o cliente preenchia
+        String printerBlock = printerBlockMessage();
+        if (printerBlock != null) {
+            showError(printerBlock.replace("\n", " "));
+            return;
+        }
+
         resetInactivityTimer();
         TicketRequest request = new TicketRequest();
         request.unidade = sessionManager.getUnidadeId();
