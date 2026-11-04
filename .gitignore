@@ -20,3 +20,6 @@ BACKUP_V*/
 
 # Relatórios/tarefas do fluxo Gemini (efêmeros, não fazem parte do código)
 BUILD_STATUS.md
+
+# Pasta do SGA (git proprio)
+/SGA/
