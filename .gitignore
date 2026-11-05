@@ -15,11 +15,10 @@
 .cxx
 local.properties
 
-# Backups manuais (grandes, redundantes com o histórico do Git)
+# Backups, APKs antigos e arquivos do fluxo Gemini (fora do Git)
+_arquivo/
 BACKUP_V*/
 
 # Relatórios/tarefas do fluxo Gemini (efêmeros, não fazem parte do código)
 BUILD_STATUS.md
 
-# Pasta do SGA (git proprio)
-/SGA/

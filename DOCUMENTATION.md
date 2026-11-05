@@ -266,7 +266,7 @@ O caminho padrão é `SessionManager.DEFAULT_UPDATE_PATH`. Usuário e senha não
    apksigner verify --print-certs TOTEM_SGA.apk
    ```
    Digest SHA-256 esperado: `c83b01ef02fcddf585e581ccd1d52db70a82b22b4254508435e720e0feb001d4`.
-4. Guarde uma cópia em uma pasta `BACKUP_V<n>_v<versão>` (ignorada pelo Git).
+4. Guarde uma cópia em `_arquivo\apk-versoes\` (ignorada pelo Git).
 5. Copie para `\\192.168.1.227\Programas TI\TOTEM_SGA` com o nome `TOTEM_SGA_v<versão>.apk`. **O número no nome do arquivo precisa ser igual ao `versionName`**, pois é por ele que o totem escolhe a versão.
 6. Atualize o Histórico de Versões abaixo e faça o commit.
 

@@ -13,9 +13,10 @@ local: `http://10.7.0.89`.
 
 Desde 07/10/2026 o desenvolvimento é feito direto pelo Claude Code
 (edita o código e gera o APK com `gradlew assembleDebug`). O fluxo
-antigo com o Gemini (`AGENT_PROTOCOL.md` / `TASK_FOR_GEMINI.md` /
-`BUILD_STATUS.md`) não é mais usado; esses arquivos ficaram só como
-histórico.
+antigo com o Gemini não é mais usado; os arquivos dele, os backups e os
+APKs de cada versão estão em `_arquivo\` (fora do Git, desde 05/11/2026).
+Esta pasta fica dentro de `C:\jefferson\projetos\SGA\` (sistema SGA,
+git próprio): o totem é `SGA\Totem_SGA\`.
 
 O totem de homologação (Sunmi K2, IP 192.168.168.139) está com a porta
 USB quebrada e o Android dele não tem depuração sem fio: o APK é
