@@ -30,6 +30,7 @@ Este documento tem duas partes:
 - **Servidor NovoSGA:** `http://10.7.0.89` (versão 2.2.5).
 - **Pasta de atualizações:** `\\192.168.1.227\Programas TI\TOTEM_SGA`.
 - O totem precisa enxergar pela rede o servidor NovoSGA e, para atualizar, o servidor da pasta.
+- **05/11/2026: o endereço dessa pasta de rede mudou** (o novo ainda não foi anotado aqui). Até sair o novo jeito de atualizar (seção 17), digite o endereço novo no campo **Pasta de atualização** do Admin; não precisa de APK novo.
 
 O totem de homologação (IP `192.168.168.139`) está com a porta USB quebrada. A tela dele é acessada por **RealVNC** e os arquivos por **AirDroid Web** (`http://192.168.168.139:8888`).
 
@@ -283,6 +284,8 @@ Se a compilação falhar com erro de `ANDROID_PREFS_ROOT`, remova essa variável
 
 ## 17. Pendências conhecidas
 
+- **Atualizar pelo próprio SGA (planejado, 05/11/2026):** a pasta de rede `\\192.168.1.227...` mudou de endereço e vai ser substituída por uma tela "Versões do totem" dentro do NovoSGA; o totem baixa a versão nova do próprio SGA, sem senha de rede. Plano em `..\Totem-Config\MAPA-FUNCIONALIDADES-TOTEM.md`, seção 10 (pasta do sistema SGA, um nível acima).
+- **Configuração pelo SGA (planejado, v1.2.0):** as opções escritas na descrição do serviço/departamento (seção 5) vão para uma tela no NovoSGA (módulo `ti.totem`, banco `ti`). Mesmo arquivo, seções 8 e 9.
 - **Erro 401:** a correção foi feita na v1.1.0, mas só se confirma com o totem ligado de um dia para o outro.
 - **Papel engasgado:** falta confirmar qual estado a impressora informa (ver seção 6).
 - **Senha do NovoSGA** salva sem criptografia nas preferências do app.
